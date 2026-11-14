@@ -1,0 +1,154 @@
+"""Export NIKKE "burst skill cut-in" Spine scenes as composed 2048px stills.
+
+The cut-ins live inside `livewallpaperprefabs_assets_livewallpaper/eventscene_c*_cutscene_*.bundle`
+(core pool). Each bundle carries:
+  TextAsset  <name>.atlas / <name>.skel
+  Texture2D  <name>            the atlas sheet (parts laid out, not a picture)
+
+So they can't be exported like a normal CG texture — they have to be rendered
+through the same Spine runtime used for the story dynamic CGs.
+
+  python scripts/export_char_cutins.py --limit 5      # 试跑
+  python scripts/export_char_cutins.py                # 全量
+
+Output: staging/spine_char/<name>/  (atlas/skel/sheet)
+        CG/04_角色过场/EventScene_<name>.png  (rendered still)
+"""
+from __future__ import annotations
+
+import argparse
+import io
+import json
+import pathlib
+import re
+import sqlite3
+import subprocess
+import sys
+import time
+
+import UnityPy
+import zstandard as zstd
+
+import export_cg_v2 as v2
+
+BASE = pathlib.Path(__file__).resolve().parents[1]
+STAGING = BASE / "staging" / "spine_char"
+OUT_DIR = BASE / "CG" / "04_角色过场"
+RUNTIME = BASE / "动态CG" / "runtime"
+SIZE = 2048
+
+
+def text_bytes(obj):
+    s = obj.read().m_Script
+    if isinstance(s, str):
+        return s.encode("utf-8", "surrogateescape")
+    return bytes(s or b"")
+
+
+def cutin_bundles(cat):
+    rows = cat.execute(
+        "select file_id, key from files_chunktype"
+        " where lower(key) like '%livewallpaperprefabs%cutscene%'"
+    ).fetchall()
+    def quality(key):
+        return 0 if "(hd)" in key.lower() else 1
+    rows.sort(key=lambda r: (quality(r[1]), r[0]))
+    return rows
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--limit", type=int, default=0, help="只处理前 N 个（试跑用）")
+    ap.add_argument("--no-render", action="store_true")
+    args = ap.parse_args()
+
+    STAGING.mkdir(parents=True, exist_ok=True)
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    cat = sqlite3.connect(v2.manifest_path("core"))
+    table = v2.cidx_map("core")
+    cdb = v2.ROOT / "core" / "chunk" / "store.cdb"
+    cdb_size = cdb.stat().st_size
+    dec = zstd.ZstdDecompressor()
+
+    rows = cutin_bundles(cat)
+    if args.limit:
+        rows = rows[:args.limit]
+    print(f"cut-in bundles: {len(rows)}", flush=True)
+
+    stats = {"exported": 0, "rendered": 0, "render_fail": 0,
+             "no_atlas": 0, "no_skel": 0, "incomplete": 0, "fail": 0}
+    started = time.time()
+    for n, (fid, key) in enumerate(rows, 1):
+        bundle, _parts, missing = v2.rebuild(cat, table, cdb, dec, fid, cdb_size)
+        if missing or not bundle or not bundle.startswith(b"UnityFS"):
+            stats["incomplete"] += 1
+            continue
+        try:
+            env = UnityPy.load(io.BytesIO(bundle))
+            objects = list(env.objects)
+        except Exception:
+            stats["fail"] += 1
+            continue
+
+        assets, textures = {}, []
+        for o in objects:
+            try:
+                name = str(getattr(o.read(), "m_Name", "") or "")
+            except Exception:
+                continue
+            if o.type.name == "TextAsset" and name.endswith((".atlas", ".skel")):
+                assets[name] = o
+            elif o.type.name == "Texture2D":
+                textures.append((name, o))
+
+        atlases = [k for k in assets if k.endswith(".atlas")]
+        if not atlases:
+            stats["no_atlas"] += 1
+            continue
+        base = atlases[0][:-len(".atlas")]
+        if base + ".skel" not in assets:
+            stats["no_skel"] += 1
+            continue
+
+        folder = STAGING / re.sub(r"[^\w.-]+", "_", base)
+        folder.mkdir(parents=True, exist_ok=True)
+        (folder / (base + ".atlas")).write_bytes(text_bytes(assets[base + ".atlas"]))
+        (folder / (base + ".skel")).write_bytes(text_bytes(assets[base + ".skel"]))
+
+        sheet = folder / (base + ".png")
+        pick = next((o for nm, o in textures if nm == base), None)
+        if pick is None:
+            pick = next((o for nm, o in textures if nm == base.split("_")[0]), None)
+        if pick is None and textures:
+            pick = max(textures, key=lambda t: t[1].read().m_Width * t[1].read().m_Height)[1]
+        if pick is None:
+            stats["fail"] += 1
+            continue
+        pick.read().image.save(sheet)
+        stats["exported"] += 1
+
+        if not args.no_render and base.startswith("c"):
+            out = OUT_DIR / f"EventScene_{base}.png"
+            if out.exists():
+                stats["rendered"] += 1
+                continue
+            p = subprocess.run(
+                ["node", "render_static.mjs", str(folder), base, str(out), str(SIZE), "1.2"],
+                cwd=str(RUNTIME), capture_output=True, text=True, timeout=180,
+            )
+            if p.returncode != 0 or not out.exists():
+                stats["render_fail"] += 1
+                print("  RENDER FAIL", base, p.stderr.strip()[:160], flush=True)
+            else:
+                stats["rendered"] += 1
+
+        if n % 20 == 0:
+            print(f"  {n}/{len(rows)} {stats} {round(time.time()-started)}s", flush=True)
+
+    print("done", json.dumps(stats, ensure_ascii=False),
+          f"{round(time.time()-started)}s")
+
+
+if __name__ == "__main__":
+    main()

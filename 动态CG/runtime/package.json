@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@esotericsoftware/spine-canvas": "^4.1.56",
+    "@esotericsoftware/spine-player": "^4.1.56",
+    "@esotericsoftware/spine-ts": "^4.1.27",
+    "@esotericsoftware/spine-webgl": "^4.1.56",
+    "@napi-rs/canvas": "^1.1.1"
+  }
+}
