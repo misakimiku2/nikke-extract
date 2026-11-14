@@ -25,7 +25,7 @@
 | `其他剧情/` | 活动、支线、个人、咨询等剧情文本（`活动剧情/Marian/` 是最新活动） |
 | `scripts/` | 在用的脚本（见下）；`scripts/legacy/` 是被取代的一次性脚本，仅留档 |
 | `data_raw/` | 原始输入：`StaticData.zip`、`_salt1.bin`、`_salt2.bin`、`_nikke_packinfo.bin` |
-| `staging/` | 只在更新时出现：`export_spine_cg.py` 的新模型先落这里，再由 `reorganize_cg.py` 并入 `CG/` |
+| `staging/` | 角色素材与动态 CG 暂存区（约 3.9 GB）。`spine_stand/` 角色站姿 Spine 模型（777 组）、`char_render/` 站姿渲染的 2048² 透明底图（565 张）、`spine_char/` 角色技能立绘（630 组 `*_skillcut`）——**这三类是网站角色页的唯一数据源，删了要重新解包**；`spine/` 才是动态 CG 暂存，由 `reorganize_cg.py` 并入 `CG/` |
 | `staticdata/` | 解密并展开的静态表（约 314 MB） |
 | `decrypted/` | 解密后的本地化 SQLite（台词、角色名等，约 409 MB） |
 | `catalogs/` | 资源 catalog 解密缓存（导出 CG 时用，约 103 MB，可重建） |
@@ -127,6 +127,9 @@ python scripts/build_cg_gallery.py      # 10. 重建缩略图与画廊
 
 | 目录 | 作用 | 能否重建 | 建议 |
 |---|---|---|---|
+| `CG/` | 静态与动态 CG 图库（约 6.8 GB，2022 个文件） | 需游戏资源池（14.8 GB）重跑 `export_cg_v2.py` / `export_spine_cg.py` | **必须留** |
+| `staging/` | 角色站姿模型、立绘渲染图、技能立绘（约 3.9 GB） | 需游戏资源池重跑 `export_char_standing.py` / `export_char_cutins.py` | **必须留**，网站角色页的唯一数据源 |
+| `主线剧情/`、`其他剧情/` | 剧情文本（约 150 MB） | 由 `staticdata/` 重跑 `export_mainstory.py` / `export_rest.py` | 建议留 |
 | `decrypted/` | 台词 / 角色名 / 章节名的 SQLite（76 个） | 需要游戏资源池里的 NKDB 源文件（`saus/raw`、`dp/raw` 等），用 `python scripts/nkdb.py <文件>` 逐个解 | **必须留**，删了要重装/重下游戏资源 |
 | `staticdata/` | 9820 张静态表（`.mpk/.csv`） | `python scripts/unpack_staticdata.py`，只依赖 `data_raw/StaticData.zip` | 建议留；真要腾空间可删，重建约 10 秒 |
 | `catalogs/` | 各资源池的 `catalog.ndb` 解密缓存 | `export_cg_v2.py` 发现缺失会自己解密（需要游戏 patch） | 可删，重跑自动生成 |
