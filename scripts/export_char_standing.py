@@ -57,6 +57,7 @@ def bundles(cat):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--only", default="", help="只处理这些模型名，逗号分隔，例如 c094_00,c100_00")
     args = ap.parse_args()
 
     STAGING.mkdir(parents=True, exist_ok=True)
@@ -69,6 +70,10 @@ def main():
     dec = zstd.ZstdDecompressor()
 
     rows = bundles(cat)
+    if args.only:
+        # 模型名 c094_00 对应 key 里的 .../standing/c094/00_hd_<hash>.bundle
+        want = {s.strip().replace("_", "/") for s in args.only.split(",") if s.strip()}
+        rows = [r for r in rows if any(f"/{w}_hd_" in r[1] for w in want)]
     if args.limit:
         rows = rows[:args.limit]
     print(f"standing bundles: {len(rows)}", flush=True)
@@ -112,13 +117,19 @@ def main():
         (folder / (base + ".atlas")).write_bytes(text_bytes(assets[base + ".atlas"]))
         (folder / (base + ".skel")).write_bytes(text_bytes(assets[base + ".skel"]))
 
-        pick = next((o for nm, o in textures if nm == base), None)
-        if pick is None and textures:
-            pick = max(textures, key=lambda t: t[1].read().m_Width * t[1].read().m_Height)[1]
-        if pick is None:
-            stats["fail"] += 1
-            continue
-        pick.read().image.save(folder / (base + ".png"))
+        # 一个站姿模型可能有 1~2 张图集页：<base>.png 与 <base>_2.png。
+        # 多页模型必须把每一页都写出来，否则网页里第二页的部件（武器/特效）会缺图。
+        pages = [(nm, o) for nm, o in textures if nm == base or re.fullmatch(re.escape(base) + r"_\d+", nm)]
+        if not pages:
+            pick = next((o for nm, o in textures if nm == base), None)
+            if pick is None and textures:
+                pick = max(textures, key=lambda t: t[1].read().m_Width * t[1].read().m_Height)[1]
+            if pick is None:
+                stats["fail"] += 1
+                continue
+            pages = [(base, pick)]
+        for nm, obj in pages:
+            obj.read().image.save(folder / (nm + ".png"))
         stats["ok"] += 1
 
         out = RENDER / f"{base}.png"
