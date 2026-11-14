@@ -1,0 +1,10 @@
+# 解包与图像处理依赖
+# 安装：pip install -r requirements.txt
+#
+# 本机验证通过的版本（2026-11）：
+#   pillow 13.0.0 / pycryptodome 4.4.0 / UnityPy 1.25.4 / zstandard 0.25.0
+
+pycryptodome>=3.20
+Pillow>=10.0
+UnityPy>=1.20
+zstandard>=0.22
