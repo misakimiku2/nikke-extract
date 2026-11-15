@@ -14,7 +14,7 @@ import sqlite3
 from collections import defaultdict
 from pathlib import Path
 
-from text_clean import clean, speaker_of
+from text_clean import clean, record_type, speaker_of, speaker_of_type
 
 BASE = Path(__file__).resolve().parents[1]
 STATIC = BASE / "staticdata"
@@ -61,24 +61,65 @@ def load_texts():
         'SELECT "Key","zh-CN","en","ja" FROM "Locale_MainScenario"')}
 
 
+def norm_group(g):
+    """d_main_26_1_s -> d_main_26_01_s（表内 line key 偶尔用一位段号）。"""
+    return re.sub(r"^(d_main_\d+_)(\d+)(?=_|$)",
+                  lambda m: m.group(1) + m.group(2).zfill(2), g)
+
+
+def chapter_block(g):
+    """d_main_02af_05 -> d_main_02af；d_main_26_01_s -> d_main_26。"""
+    m = re.match(r"^(d_main_\d+(?:af)?)", g)
+    return m.group(1) if m else g
+
+
+# CSV 里登记过的段落都有自己的表文件；没登记、但和当前表同章节的 group
+# （如 d_main_02af_05/06 写在 d_main_02af_04.mpk 里）需要一起收进来。
+CSV_GROUPS = {norm_group(l.strip()) for l in GROUP_CSV.read_text(encoding="utf-8-sig").splitlines()
+              if l.strip().startswith("d_main_")}
+
+
 def parse_group(group, names, texts):
     path = STATIC / f"ScenarioDialogTable.{group}.mpk"
     raw = path.read_bytes()
     toks = [(m.start(), m.group().decode("ascii", "replace")) for m in TOKEN.finditer(raw)]
-    id_re = re.compile(re.escape(group) + r"_(\d+)$")
-    anchors = [(o, int(id_re.match(s).group(1)))
-               for o, s in toks if id_re.fullmatch(s)]
+    # 表名用两位段号（d_main_26_01_s），表内 line key 偶尔用一位（d_main_26_1_s_1），
+    # 直接按组名拼正则会让整章匹配不到、全部退化成 locale_fill 补全（丢说话人）。
+    # 统一补零后再比对；同章节但没有独立表文件的嵌入 group 也一并收进来。
+    want = norm_group(group)
+    block = chapter_block(want)
+    anchors = []
+    for i, (o, s) in enumerate(toks):
+        m = re.fullmatch(r"(.+)_(\d+)", s)
+        if not m:
+            continue
+        # 只认「行 key + group」这一对：group 字段本身也以 _NN 结尾，
+        # 不加这个判断会把 group 当成锚点，把每条记录切碎、说话人全丢。
+        if i + 1 >= len(toks) or norm_group(toks[i + 1][1]) != want:
+            continue
+        ng = norm_group(m.group(1))
+        if ng == want or (ng not in CSV_GROUPS and chapter_block(ng) == block):
+            anchors.append(o)
     lines = []
-    for k, (start, n) in enumerate(anchors):
-        end = anchors[k + 1][0] if k + 1 < len(anchors) else len(raw)
-        seg = [s for o, s in toks if start <= o < end]
-        lk = next((i for i, s in enumerate(seg) if s.startswith("Locale_MainScenario:")), None)
+    for n, start in enumerate(anchors, start=1):
+        k = n - 1
+        end = anchors[k + 1] if k + 1 < len(anchors) else len(raw)
+        seg = [(o, s) for o, s in toks if start <= o < end]
+        lk = next((i for i, (_o, s) in enumerate(seg) if s.startswith("Locale_MainScenario:")), None)
         if lk is None:
             continue
-        key = seg[lk][len("Locale_MainScenario:"):]
-        pre = seg[2:lk]
+        key = seg[lk][1][len("Locale_MainScenario:"):]
+        pre = [s for _o, s in seg[2:lk]]
         chars = [s for s in pre if s in names]
         speaker, sid = speaker_of(pre, names)
+        # 记录类型优先：type=4 是指挥官台词，type=5 是玩家选项。
+        # 后期章节的指挥官台词只有立绘 ID、没有 Self 标记，靠类型才能补上名字。
+        gi = next((j for j in range(lk - 1, -1, -1)
+                   if norm_group(seg[j][1]) == norm_group(group)), None)
+        typ = record_type(raw, seg[gi][1], seg[gi][0]) if gi is not None else None
+        by_type = speaker_of_type(typ)
+        if by_type is not None:
+            speaker, sid = by_type
         pid = chars[0] if chars else None
         r = texts.get(key)
         if r is None:
@@ -91,7 +132,6 @@ def parse_group(group, names, texts):
             "portrait_id": pid,
             "zh-CN": clean(r["zh-CN"]), "en": r["en"], "ja": r["ja"],
         })
-    lines.sort(key=lambda x: x["n"])
     return lines
 
 
