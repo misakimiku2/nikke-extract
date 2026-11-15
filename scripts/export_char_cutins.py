@@ -56,6 +56,51 @@ def cutin_bundles(cat):
     return rows
 
 
+BG_EXCLUDE = re.compile(
+    r"mask|uv|pattern|ptc|trail|ani|blur|remap|dis|water|smoke|gra|solid|part"
+    r"|wind|flash|line|light|impact|noise|cloud|shape|ball|lens|frame|hud", re.I)
+
+# 启发式抽出来但人工判定不适合当背景的（联络表核过）：
+#   c441 是黑角 FX 遮罩、c223_01 是 128² 近纯黑
+BG_SKIP = {"c441_00_skillcut", "c223_01_skillcut"}
+# 2×2 图集（白天/黑夜/剪影/裂痕），取左上白天象限
+BG_CROP = {"c851_00_skillut": (0, 0, 512, 512)}
+
+
+def pick_bg_texture(textures, base):
+    """从 bundle 里挑一张可用的背景贴图。
+
+    游戏里大招的背景有的是独立手绘场景（c010_bg / c131_bg_01），有的是
+    Unity 粒子+渐变板拼的（复现不了）。这里只认「名字以 bg 段结尾、属于本
+    家族、接近不透明」的贴图——FX 图集透明区多，会被不透明度阈值挡掉。
+    """
+    fam = re.match(r"^(c\d+)", base)
+    fam = fam.group(1) if fam else base.split("_")[0]
+    cands = []
+    for name, obj in textures:
+        if not re.search(r"(^|_)bg(_?\d+)?$", name, re.I):
+            continue
+        if BG_EXCLUDE.search(name):
+            continue
+        if not (name == f"{fam}_bg" or name.startswith((f"{fam}_", f"fx_{fam}_"))):
+            continue
+        try:
+            img = obj.read().image
+        except Exception:
+            continue
+        if img.mode != "RGBA":
+            img = img.convert("RGBA")
+        hist = img.getchannel("A").histogram()
+        opaque = sum(hist[250:]) / (img.width * img.height)
+        if opaque < 0.9:
+            continue
+        cands.append((name.startswith("fx_"), not name == f"{fam}_bg", -img.width * img.height, name, img))
+    if not cands:
+        return None
+    cands.sort(key=lambda c: c[:4])
+    return cands[0][3], cands[0][4]
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, default=0, help="只处理前 N 个（试跑用）")
@@ -76,7 +121,7 @@ def main():
         rows = rows[:args.limit]
     print(f"cut-in bundles: {len(rows)}", flush=True)
 
-    stats = {"exported": 0, "rendered": 0, "render_fail": 0,
+    stats = {"exported": 0, "rendered": 0, "render_fail": 0, "bgs": 0,
              "no_atlas": 0, "no_skel": 0, "incomplete": 0, "fail": 0}
     started = time.time()
     for n, (fid, key) in enumerate(rows, 1):
@@ -131,6 +176,15 @@ def main():
         for nm, obj in pages:
             obj.read().image.save(folder / (nm + ".png"))
         stats["exported"] += 1
+
+        # 独立背景贴图（有的话）存成 bg.png，网页大招模式铺底层用
+        bg = None if base in BG_SKIP else pick_bg_texture(textures, base)
+        if bg:
+            img = bg[1]
+            if base in BG_CROP:
+                img = img.crop(BG_CROP[base])
+            img.save(folder / "bg.png")
+            stats["bgs"] += 1
 
         if not args.no_render and base.startswith("c"):
             out = OUT_DIR / f"EventScene_{base}.png"
