@@ -117,15 +117,19 @@ def main():
         (folder / (base + ".skel")).write_bytes(text_bytes(assets[base + ".skel"]))
 
         sheet = folder / (base + ".png")
-        pick = next((o for nm, o in textures if nm == base), None)
-        if pick is None:
+        # 图集可能有多页：<base>.png 与 <base>_2.png（特效/武器第二页），都要存
+        pages = [(nm, o) for nm, o in textures
+                 if nm == base or re.fullmatch(re.escape(base) + r"_\d+", nm)]
+        if not pages:
             pick = next((o for nm, o in textures if nm == base.split("_")[0]), None)
-        if pick is None and textures:
-            pick = max(textures, key=lambda t: t[1].read().m_Width * t[1].read().m_Height)[1]
-        if pick is None:
-            stats["fail"] += 1
-            continue
-        pick.read().image.save(sheet)
+            if pick is None and textures:
+                pick = max(textures, key=lambda t: t[1].read().m_Width * t[1].read().m_Height)[1]
+            if pick is None:
+                stats["fail"] += 1
+                continue
+            pages = [(base, pick)]
+        for nm, obj in pages:
+            obj.read().image.save(folder / (nm + ".png"))
         stats["exported"] += 1
 
         if not args.no_render and base.startswith("c"):
