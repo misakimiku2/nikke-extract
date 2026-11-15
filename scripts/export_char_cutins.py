@@ -66,6 +66,14 @@ BG_SKIP = {"c441_00_skillcut", "c223_01_skillcut"}
 # 2×2 图集（白天/黑夜/剪影/裂痕），取左上白天象限
 BG_CROP = {"c851_00_skillut": (0, 0, 512, 512)}
 
+# 启发式漏掉的「场景背景」：名字不带 bg 的整幅场景图，人工指定贴图与裁剪框。
+#   c352_02（海伦·浴后）：大招是泡澡演出，模型本身不画躯干（游戏里被水面/水花
+#   粒子盖住），必须把浴缸场景垫在底下画面才成立。fx 图集上半是两个场景变体，
+#   取右上的亮色版（激溅水花态）。
+BG_SCENE_OVERRIDE = {
+    "c352_02_skillcut": ("fx_c352_02_cut_scene_atlas_01", (512, 0, 1024, 512)),
+}
+
 
 def pick_bg_texture(textures, base):
     """从 bundle 里挑一张可用的背景贴图。
@@ -178,13 +186,23 @@ def main():
         stats["exported"] += 1
 
         # 独立背景贴图（有的话）存成 bg.png，网页大招模式铺底层用
-        bg = None if base in BG_SKIP else pick_bg_texture(textures, base)
-        if bg:
-            img = bg[1]
-            if base in BG_CROP:
-                img = img.crop(BG_CROP[base])
-            img.save(folder / "bg.png")
-            stats["bgs"] += 1
+        if base in BG_SCENE_OVERRIDE:
+            tex_name, crop = BG_SCENE_OVERRIDE[base]
+            obj = next((o for nm, o in textures if nm == tex_name), None)
+            if obj is not None:
+                img = obj.read().image
+                if crop:
+                    img = img.crop(crop)
+                img.save(folder / "bg.png")
+                stats["bgs"] += 1
+        else:
+            bg = None if base in BG_SKIP else pick_bg_texture(textures, base)
+            if bg:
+                img = bg[1]
+                if base in BG_CROP:
+                    img = img.crop(BG_CROP[base])
+                img.save(folder / "bg.png")
+                stats["bgs"] += 1
 
         if not args.no_render and base.startswith("c"):
             out = OUT_DIR / f"EventScene_{base}.png"
