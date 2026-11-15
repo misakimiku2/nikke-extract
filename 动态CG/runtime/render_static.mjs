@@ -9,6 +9,20 @@ import { createCanvas } from '@napi-rs/canvas';
 import * as spine from '@esotericsoftware/spine-canvas';
 import { SeamFreeRenderer, prepareAtlasTextures, applySlotOverrides } from './spine-seamfix.mjs';
 
+// 少数模型（如芭比珑 c908、嚣嘈 c909）的 skel 引用了序列帧 arm_h_l01，
+// 但客户端图集只打了基础帧 arm_h_l。缺帧时退回基础区域，否则整只模型会加载失败。
+const origLoadSequence = spine.AtlasAttachmentLoader.prototype.loadSequence;
+spine.AtlasAttachmentLoader.prototype.loadSequence = function (name, basePath, sequence) {
+    const regions = sequence.regions;
+    for (let i = 0; i < regions.length; i++) {
+        const p = sequence.getPath(basePath, i);
+        let region = this.atlas.findRegion(p);
+        if (!region) region = this.atlas.findRegion(basePath);
+        if (!region) throw new Error('Region not found in atlas: ' + p + ' (sequence: ' + name + ')');
+        regions[i] = region;
+    }
+};
+
 const dir = process.argv[2];
 const base = process.argv[3];
 const out = process.argv[4];
