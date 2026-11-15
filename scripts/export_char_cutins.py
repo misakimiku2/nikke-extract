@@ -70,8 +70,13 @@ BG_CROP = {"c851_00_skillut": (0, 0, 512, 512)}
 #   c352_02（海伦·浴后）：大招是泡澡演出，模型本身不画躯干（游戏里被水面/水花
 #   粒子盖住），必须把浴缸场景垫在底下画面才成立。fx 图集上半是两个场景变体，
 #   取右上的亮色版（激溅水花态）。
+# 值支持两种形式：单个 (贴图, 裁剪框) 或 [(贴图, 裁剪框), ...] —— 后者按顺序
+# 存成 bg.png / bg2.png（多镜切换的大招每个镜头一张场景图，网页按时间切换）。
 BG_SCENE_OVERRIDE = {
-    "c352_02_skillcut": ("fx_c352_02_cut_scene_atlas_01", (512, 0, 1024, 512)),
+    "c352_02_skillcut": [
+        ("fx_c352_02_cut_scene_atlas_01", (0, 0, 512, 512)),     # 第一镜：海景窗全景（透视）
+        ("fx_c352_02_cut_scene_atlas_01", (512, 0, 1024, 512)),  # 第二镜：木地板近景
+    ],
 }
 
 
@@ -187,13 +192,17 @@ def main():
 
         # 独立背景贴图（有的话）存成 bg.png，网页大招模式铺底层用
         if base in BG_SCENE_OVERRIDE:
-            tex_name, crop = BG_SCENE_OVERRIDE[base]
-            obj = next((o for nm, o in textures if nm == tex_name), None)
-            if obj is not None:
+            entries = BG_SCENE_OVERRIDE[base]
+            if entries and not isinstance(entries[0], (tuple, list)):
+                entries = [entries]
+            for bi, (tex_name, crop) in enumerate(entries):
+                obj = next((o for nm, o in textures if nm == tex_name), None)
+                if obj is None:
+                    continue
                 img = obj.read().image
                 if crop:
                     img = img.crop(crop)
-                img.save(folder / "bg.png")
+                img.save(folder / ("bg.png" if bi == 0 else f"bg{bi + 1}.png"))
                 stats["bgs"] += 1
         else:
             bg = None if base in BG_SKIP else pick_bg_texture(textures, base)
