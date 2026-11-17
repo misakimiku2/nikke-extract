@@ -135,6 +135,43 @@ staticdata 里（`SkillInfoTable` / `StateEffectTable` 中相关条目只有 0/1
 staging/cube_stats.json   15 级三围加成 + 插槽数 + 18 个魔方的效果档位 + 通用优越代码伤害
 ```
 
+## 珍藏品 / 收集品（Favorite Item）表（2026-11-18 逆向）
+
+| 表 | 记录布局 | 作用 |
+|---|---|---|
+| `FavoriteItemTable.mpk` | 变长记录（6 职业 × R/SR 共 12 条主记录） | 珍藏品本体：名称 key、图标 key、职业 |
+| `FavoriteItemLevelTable.mpk` | `4B 记录数 + 每条 62B`（255 条） | 每级三围：12 款 × 16 级(0-15) + 21 技能组 × 3 级 |
+| `FavoriteItemExpTable.mpk` 等 | 变长 | 升级经验 / 概率 / 任务（数值未用于前端） |
+
+**珍藏品 = 收集品娃娃**：6 职业各有 R 版（`_00`）与 SR 限量版（`_01`），
+按武器类型分为步枪/机枪/发射器/霰弹/冲锋/狙击，名称如「料理指挥官娃娃」。
+本体记录的 `rowid`（100101、100102…）同时是等级表的关联键 `fid`（偏移 5 的 u32）。
+
+`FavoriteItemLevelTable` 定长 62B，关键字段（`struct.unpack_from('<I', seg, off)`）：
+`off 1 = rowid`、`off 5 = fid`、`off 13 = 等级(0-15)`、
+**`off 26 = ATK`、`off 35 = DEF`、`off 44 = HP`**。
+
+数值经社区（nikke.gg / gamekee）交叉验证：
+
+| | HP | ATK | DEF |
+|---|---|---|---|
+| R Lv15 | 147,250 | 4,736 | 1,002 |
+| SR Lv0 | 94,000 | 3,029 | 638 |
+| SR Lv15 | 301,800 | 9,688 | 2,058 |
+
+R/SR 的 16 级三围曲线一致，仅满值不同。珍藏品的百分比技能效果（SR 的
+`防御▲37% / 受伤▼17% / 掩体HP▲30%` 等，按职业而异）是战斗属性，不进入三围面板，
+且数值不在 staticdata 里，前端按职业常量单独展示。
+
+图标在 dp 池 `icons-favoriteitem(hd)`：`si_favoriteitem_<职业>_00`（R/SR 共用），
+导出用 `python nikke-web/build/export_ui_icons.py "icons-favoriteitem(hd)" --out favoriteicon --only <keys>`。
+
+输出（`python scripts/export_favorites.py`）：
+
+```
+staging/favorite_stats.json   12 款珍藏品 × 16 级三围 + 名称/职业/图标 key
+```
+
 ## CG 命名约定
 
 动态 CG 的文件夹里是四件套，平铺存放：
