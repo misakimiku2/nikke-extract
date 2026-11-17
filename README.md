@@ -57,6 +57,7 @@ python scripts/decrypt_nkdb_batch.py          # 批量解 NKDB（台词库、cat
 python scripts/unpack_staticdata.py           # 只从 data_raw/StaticData.zip 重建 staticdata/（不需要游戏）
 python scripts/export_mainstory.py            # 主线 50 章
 python scripts/export_rest.py                 # 活动/支线/个人/咨询
+python scripts/export_char_stats.py           # 角色基础属性（HP/ATK/DEF）→ staging/
 python scripts/export_story_v2.py             # 最新活动（玛丽安）文本
 python scripts/export_cg_v2.py                # 静态 CG（直接写入 CG/<分类>/；已有 .spine.png 的动态 CG 会跳过，不覆盖渲染插画）
 python scripts/export_spine_cg.py             # Spine 动态 CG → staging/spine
@@ -67,6 +68,71 @@ python scripts/build_spine_viewer.py          # 重建动态 CG 查看器
 python build/build_images.py                # 重转网页三档图片（CG/ 改动后跑）
 python build/build_spine_models.py --force  # 重建网页实时模型图集（atlas/skel/贴图）
 python scripts/reorganize_cg.py --dry-run     # 预览 CG 目录重排（正常情况不需要再跑）
+```
+
+## 角色基础属性表（2026-11-17 逆向）
+
+角色三围（HP / 攻击 / 防御）来自下面两张表，都是**定长二进制记录**、无字段名，
+字段顺序靠逆向确定：
+
+| 表 | 记录布局 | 作用 |
+|---|---|---|
+| `CharacterStatTable.mpk` | `4B 记录数 + 每条 41B`（`1B flag=0x09` + 10×int32） | 54 个模板 × 1400 级的数值曲线 |
+| `CharacterTable.mpk` | 变长：`rowid` + name/desc 字符串字段 + 32 个 int32 + cv | 每个角色的稀有度、职业、武器 → 模板键 |
+
+`CharacterStatTable` 每行：`[0]=组合ID [1]=模板键 [2]=等级 [3]=HP [4]=保留 [5]=ATK [6]=DEF`。
+
+**模板键编码**：`稀有度×1000 + 职业×100 + 武器`
+
+- 稀有度：`1=R`、`3=SR`、`5=SSR`
+- 职业：`1=火力型`、`2=防御型`、`3=辅助型`
+- 武器：`1=ar`、`2=sr`、`3=smg`、`4=sg`、`5=rl`、`6=mg`
+
+例：拉毗 = SR + 火力 + AR → `3101`；爱丽丝 = SSR + 火力 + 狙击 → `5102`。
+**武器只影响 DEF，HP 与 ATK 只由稀有度和职业决定**。
+
+`CharacterTable` 的 32 列中，`[0]=角色 id`、`[4]=稀有度`、`[7]=模板键` 是需要的部分；
+其余多为技能 id、初始装备、展示参数。字符串字段用负 tag 标记（旧 schema `-25/-23`、
+新 schema `-26/-24`，payload 为 `uint32 长度 + utf-8`），解析时跳过即可。
+
+输出（`python scripts/export_char_stats.py`）：
+
+```
+staging/char_stats.json    212 个可战斗角色：模板/稀有度/职业/武器 + 16 个关键等级的数值
+staging/stat_curves.json   54 模板 × 1400 级完整曲线（数组形式，索引 = 等级-1）
+staging/char_stats.csv     同样内容的表格版，方便直接看
+```
+
+覆盖：2040 条记录 / 212 个角色（178 SSR、21 SR、13 R）。`characters.json` 里另外
+100 个角色没有战斗数据（剧情 NPC）；老角色在表尾部使用旧 schema，同一条解析路径可读。
+
+表中是**裸装基础值**，不含突破、好感、装备、魔方加成。突破按全 SSR 通用公式叠加：
+每次升星 `HP×1.02+3000`、`ATK×1.02+20`、`DEF×1.02+100`；核心强化每次再 `×1.02`。
+
+## 魔方（Harmony Cube）表（2026-11-17 逆向）
+
+| 表 | 记录布局 | 作用 |
+|---|---|---|
+| `ItemHarmonyCubeLevelTable.mpk` | `4B 记录数 + 每条 79B` | 270 条 = 18 魔方 × 15 级 |
+| `ItemHarmonyCubeTable.mpk` | 变长（同 CharacterTable 的字符串 tag 结构） | 18 个魔方的 id 与本地化 key |
+
+`ItemHarmonyCubeLevelTable` 每条：`flag(0x09)` + `rowid` + `cubeId` + `level`，
+偏移 `32` 是技能 id（`7020001`… 与魔方一一对应）、`40` 是升级信用点、`44` 是插槽数，
+**尾部 27 字节是 3 组 `[0x02][key:u32][value:u32]`**，`key 1=ATK、3=DEF、2=HP`。
+
+关键结论：**这 15 级的三围加成对 18 种魔方完全一致**（Lv1 `390/78/11,800` →
+Lv15 `2,780/552/83,400`），魔方之间的差异全在各自的技能效果上，而技能数值不在
+staticdata 里（`SkillInfoTable` / `StateEffectTable` 中相关条目只有 0/1 开关），
+所以 `export_cubes.py` 的技能档位取自社区实测表，规律是：
+**Lv1-2 / Lv3-6 / Lv7-15 三档，约为满值的 1/2、3/4、1 倍**。
+
+18 种魔方里只有 `Vigor（最大体力+9.69%）` 与 `Endurance（防御力+48.45%）` 会作用到
+三围面板，其余（装弹速度、弹药返还、蓄力速度…）属于战斗属性。
+
+输出（`python scripts/export_cubes.py`）：
+
+```
+staging/cube_stats.json   15 级三围加成 + 插槽数 + 18 个魔方的效果档位 + 通用优越代码伤害
 ```
 
 ## CG 命名约定
