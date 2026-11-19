@@ -46,14 +46,51 @@ def text_bytes(obj):
 
 
 def cutin_bundles(cat):
+    """大招 cut-in 的 bundle 有两个家族，内容基本重合，都要扫：
+
+    - livewallpaperprefabs_assets_livewallpaper/eventscene_c010_00_cutscene_*
+    - spotskillcutscene_assets_c010_00_cut_scene_*
+
+    早先只认第一个，导致新角色（如 c530 思凯）只有第二个家族时被整只漏掉。
+    同一个角色两个家族都有时优先取 livewallpaperprefabs（贴图页更全）。
+    """
     rows = cat.execute(
         "select file_id, key from files_chunktype"
         " where lower(key) like '%livewallpaperprefabs%cutscene%'"
+        "    or lower(key) like '%spotskillcutscene%cut_scene%'"
     ).fetchall()
+
     def quality(key):
-        return 0 if "(hd)" in key.lower() else 1
+        low = key.lower()
+        return (0 if "(hd)" in low else 1,
+                0 if "livewallpaperprefabs" in low else 1,
+                low)
+
+    def family(key):
+        """同一个 cut-in 在两个家族里各有一份，按「角色+皮肤」合并。
+
+        两个家族的 key 形状不一样：
+          .../eventscene_c010_cutscene_<hash>      （皮肤缺省 = 00）
+          ...c016_01_cut_scene_<hash>
+        """
+        m = re.search(r"(c\d{3})_(\d{2})_cut_?scene", key)
+        if m:
+            return (m.group(1), m.group(2))
+        m = re.search(r"(c\d{3})_cutscene", key)
+        if m:
+            return (m.group(1), "00")
+        m = re.search(r"(c\d{3})_(\d{2})", key)
+        return (m.group(1), m.group(2)) if m else (key, "")
+
     rows.sort(key=lambda r: (quality(r[1]), r[0]))
-    return rows
+    seen, out = set(), []
+    for fid, key in rows:
+        fam = family(key)
+        if fam in seen:
+            continue
+        seen.add(fam)
+        out.append((fid, key))
+    return out
 
 
 BG_EXCLUDE = re.compile(
@@ -77,6 +114,9 @@ BG_SCENE_OVERRIDE = {
         ("fx_c352_02_cut_scene_atlas_01", (0, 0, 512, 512)),     # 第一镜：海景窗全景（透视）
         ("fx_c352_02_cut_scene_atlas_01", (512, 0, 1024, 512)),  # 第二镜：木地板近景
     ],
+    # 思凯：大招四块场景拼在一张 1024² 图集里（左上高空云海 / 右上机舱内 /
+    # 左下城市天际线 / 右下同景虚焦）。她的 ult 是「FLY!」往天上冲，取左上。
+    "c530_00_skillcut": ("fx_c530_cutscene_bg_atlas", (0, 0, 512, 512)),
 }
 
 
@@ -117,6 +157,8 @@ def pick_bg_texture(textures, base):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, default=0, help="只处理前 N 个（试跑用）")
+    ap.add_argument("--bundle-id", type=int, default=0,
+                    help="只处理指定 file_id 的 bundle（补单个角色用，绕过家族过滤）")
     ap.add_argument("--no-render", action="store_true")
     args = ap.parse_args()
 
@@ -130,6 +172,13 @@ def main():
     dec = zstd.ZstdDecompressor()
 
     rows = cutin_bundles(cat)
+    if args.bundle_id:
+        key = cat.execute("select key from files_chunktype where file_id=?",
+                          (args.bundle_id,)).fetchone()
+        if not key:
+            print("! 找不到这个 file_id", args.bundle_id)
+            return
+        rows = [(args.bundle_id, key[0])]
     if args.limit:
         rows = rows[:args.limit]
     print(f"cut-in bundles: {len(rows)}", flush=True)
