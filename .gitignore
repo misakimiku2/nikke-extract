@@ -53,3 +53,9 @@ desktop.ini
 *.tmp
 *.bak
 /tmp/
+
+# 更新检查与临时解包产物（每次版本更新重新生成）
+/_update_check/
+
+# 导出的 Spine 模型（可由 export_spine_cg.py / export_event_scene.py 重建）
+/动态CG/模型/
