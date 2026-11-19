@@ -114,6 +114,7 @@ EVENT_TITLES = {
     "coinrushshowdown": "COIN RUSH SHOWDOWN",
     "littlewitchtrick": "LITTLE WITCH TRICK",
     "marian": "MARIAN",
+    "skyontherock": "SKY ON THE ROCK",
     # 独立小游戏 / 纪念活动
     "bbqmaster": "BBQ MASTER",
     "2024summer_fishing": "2024 SUMMER · FISHING",
@@ -179,6 +180,7 @@ EVENT_ALIASES = [
     ("event_goldencoinrush", "goldencoinrush"),
     ("event_oldtales", "oldtales"),
     ("event_marian", "marian"),
+    ("event_skyontherock", "skyontherock"),
     # 联动
     ("event_fullfoolday_end", "fullfoolday"),
     ("event_ce_01", "ce01"),
