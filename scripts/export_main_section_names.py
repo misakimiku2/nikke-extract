@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""生成主线剧情 group_key -> 游戏内真实小节名（含 A/B 后缀）。
+"""生成主线剧情 group_key -> 游戏内真实小节名（含 A/B 后缀，四语）。
 
 数据源（全部本地）：
   staticdata/MainQuestTable.mpk      stage id -> main_quest_description_localkey_N
   staticdata/CampaignStageTable.mpk  stage id -> 剧情 group 列表（d_main_NN_MM[_s/_e]）
   staticdata/AlbumResourceTable.mpk  【权威】description_localkey_N -> group（游戏章节列表用这张表）
-  decrypted/Locale_MainQuest         description_localkey_N -> 中文小节名
+  decrypted/Locale_MainQuest         description_localkey_N -> 小节名（zh-CN/en/ko/ja）
 
 AlbumResourceTable 是游戏内章节列表的权威映射，直接把节名 localkey 关联到 group，
 且自带 _a/_b 后缀（A/B 分支）。MainQuestTable 的 desc 编号在后期会错位
@@ -14,6 +14,7 @@ AlbumResourceTable 是游戏内章节列表的权威映射，直接把节名 loc
 A/B 后缀：一个 stage 含 _s/_e 两个 group 时，对应游戏里的 A / B 两个分支。
 
 输出：build/main_section_names.json（由调用方指定 --out）
+格式：group_key -> {"zh": ..., "en": ..., "ko": ..., "ja": ...}；缺语言缺省为空串。
 """
 import argparse, json, os, re, sqlite3, struct, sys
 from collections import OrderedDict
@@ -77,18 +78,23 @@ def main():
         if grps:
             stage_groups[sid] = grps
 
-    # desc 名
+    # desc 名（四语：zh-CN / en / ko / ja；Locale_MainQuest 同表带全部语言列）
     dec = find_dec(os.path.join(BASE, "decrypted"))
     con = sqlite3.connect(f"file:{dec}?mode=ro", uri=True)
     desc = {}
     desc_full = {}
-    for k, v in con.execute('SELECT "Key","zh-CN" FROM Locale_MainQuest'):
+    for k, zh, en, ko, ja in con.execute(
+            'SELECT "Key","zh-CN",en,ko,ja FROM Locale_MainQuest'):
+        if not zh:
+            continue
+        langs = {"zh": zh.strip(), "en": (en or "").strip(),
+                 "ko": (ko or "").strip(), "ja": (ja or "").strip()}
         m = re.search(r"main_quest_description_localkey_(\d+)$", k)
-        if m and v:
-            desc[int(m.group(1))] = v.strip()
+        if m:
+            desc[int(m.group(1))] = langs
         # 保留完整 key（含 _a/_b 后缀），Album 表用这种格式
-        if v and "main_quest_description_localkey_" in k:
-            desc_full[k.split(":", 1)[-1]] = v.strip()
+        if "main_quest_description_localkey_" in k:
+            desc_full[k.split(":", 1)[-1]] = langs
     con.close()
 
     name_map = {}
@@ -102,7 +108,8 @@ def main():
         else:
             labels = ["A", "B", "C"][:len(grps)]
             for g, lab in zip(grps, labels):
-                name_map[g] = f"{title}: {lab}"
+                name_map[g] = {lang: f"{t}: {lab}" if t else ""
+                               for lang, t in title.items()}
 
     # 后记段（d_main_NNaf_MM 等）不在 CampaignStageTable 里，但 MainQuestTable
     # 的 quest 记录里直接带着 group 名：desc42「判决」-> d_main_04af_01。

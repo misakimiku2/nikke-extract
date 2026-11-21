@@ -20,6 +20,12 @@ This version uses the game's own manifest:
 For each CG bundle: look up its chunk list ordered by file_offset, read each
 zstd frame, place decompressed bytes at file_offset, open with UnityPy and
 export every EventScene_* Texture2D.
+
+画质说明（2026-11-21 实测）：同一 CG 的 HD/SD bundle 在 catalog 里各有一份，
+但客户端只下载本机画质层——本机（HD 设备）store.cdb 里 SD chunk 全缺
+（1245 个 SD bundle 0 个可完整重建），因此导出的全部是 HD 原生分辨率，
+不存在「SD 覆盖 HD」的问题；SD bundle 在去重后直接跳过，不再浪费重建。
+已存在的成品文件一律跳过不覆盖（幂等重跑，只补缺失）。
 """
 import collections
 import csv
@@ -81,14 +87,19 @@ def cg_files(conn):
         return 0 if "(hd)" in key.lower() else 1
     rows.sort(key=lambda r: (quality(r[1]), r[0]))
     seen = set()
+    skipped_sd = 0
     for fid, key in rows:
         # dedupe by bundle identity ignoring the hd/sd tag and trailing hash
-        m = re.search(r"assets_((?:eventscene_).+?)_[0-9a-f]{40}\.bundle", key, re.I)
+        # hash 长度实测 32 位 hex（旧版误写成 40 导致 HD/SD 重复处理）
+        m = re.search(r"assets_((?:eventscene_).+?)_[0-9a-f]{32}\.bundle", key, re.I)
         ident = m.group(1).lower() if m else key
         if ident in seen:
+            skipped_sd += 1
             continue
         seen.add(ident)
         yield fid, key
+    if skipped_sd:
+        print(f"  dedupe: {skipped_sd} lower-quality duplicates skipped")
 
 
 def rebuild(conn, table, cdb, dec, file_id, cdb_size):
@@ -163,6 +174,10 @@ def main():
                     if (folder / (dest.stem + ".spine.png")).exists():
                         # dynamic CG: keep the rendered illustration, don't overwrite with the sheet
                         stats["skipped_dynamic"] += 1
+                        continue
+                    if dest.exists():
+                        # 幂等：重跑不覆盖已有成品（可能含人工校正），只补缺失
+                        stats["already_exists"] += 1
                         continue
                     img.save(dest)
                     sc = noise_score(img)

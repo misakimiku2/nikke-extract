@@ -1,0 +1,16 @@
+{
+ "cg_pos_after_locale": 1756,
+ "cg_pos_before_locale": 0,
+ "cg_pos_same": 0,
+ "monotonic_groups": {
+  "true": 578
+ },
+ "distinct_bgm": 322,
+ "distinct_sfx": 1965,
+ "movie_tokens": {
+  "movieeffect": 2
+ },
+ "movie_files": {
+  "AttractiveScenarioDialogTable.d_nikke_vesti_04.mpk": 2
+ }
+}

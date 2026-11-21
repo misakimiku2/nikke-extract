@@ -1,0 +1,247 @@
+[
+ {
+  "identity": "absolute_02_1",
+  "disk_file": "E:\\test\\nikke_extract\\CG\\01_活动剧情CG\\absolute\\EventScene_absolute_02_1.png",
+  "disk_dims": [
+   2048,
+   2048
+  ],
+  "hd": {
+   "pool": "dp",
+   "quality": "hd",
+   "chunks": 55,
+   "chunks_present_in_cidx": 55,
+   "rebuild_ok": true,
+   "textures": [
+    {
+     "name": "EventScene_absolute_02_1",
+     "w": 2048,
+     "h": 2048
+    }
+   ]
+  },
+  "sd": {
+   "pool": "dp",
+   "quality": "sd",
+   "chunks": 15,
+   "chunks_present_in_cidx": 0,
+   "rebuild_ok": false,
+   "textures": []
+  }
+ },
+ {
+  "identity": "beautyfullshot_01",
+  "disk_file": "E:\\test\\nikke_extract\\CG\\01_活动剧情CG\\BeautyFullShot\\EventScene_BeautyFullShot_01.png",
+  "disk_dims": [
+   1024,
+   1024
+  ],
+  "hd": {
+   "pool": "dp",
+   "quality": "hd",
+   "chunks": 13,
+   "chunks_present_in_cidx": 13,
+   "rebuild_ok": true,
+   "textures": [
+    {
+     "name": "EventScene_BeautyFullShot_01",
+     "w": 1024,
+     "h": 1024
+    }
+   ]
+  },
+  "sd": {
+   "pool": "dp",
+   "quality": "sd",
+   "chunks": 13,
+   "chunks_present_in_cidx": 12,
+   "rebuild_ok": false,
+   "textures": []
+  }
+ },
+ {
+  "identity": "bluewaterisland_02",
+  "disk_file": "E:\\test\\nikke_extract\\CG\\01_活动剧情CG\\BluewaterIsland\\EventScene_BluewaterIsland_02.png",
+  "disk_dims": [
+   1024,
+   1024
+  ],
+  "hd": {
+   "pool": "dp",
+   "quality": "hd",
+   "chunks": 13,
+   "chunks_present_in_cidx": 13,
+   "rebuild_ok": true,
+   "textures": [
+    {
+     "name": "EventScene_BluewaterIsland_02",
+     "w": 1024,
+     "h": 1024
+    }
+   ]
+  },
+  "sd": {
+   "pool": "dp",
+   "quality": "sd",
+   "chunks": 13,
+   "chunks_present_in_cidx": 12,
+   "rebuild_ok": false,
+   "textures": []
+  }
+ },
+ {
+  "identity": "bowwowparadise_01_2",
+  "disk_file": "E:\\test\\nikke_extract\\CG\\01_活动剧情CG\\BowWowParadise\\EventScene_BowWowParadise_01_2.png",
+  "disk_dims": [
+   512,
+   512
+  ],
+  "hd": null,
+  "sd": null
+ },
+ {
+  "identity": "cherryblossom_01_2",
+  "disk_file": "E:\\test\\nikke_extract\\CG\\01_活动剧情CG\\CherryBlossom\\EventScene_CherryBlossom_01_2.png",
+  "disk_dims": [
+   512,
+   512
+  ],
+  "hd": null,
+  "sd": null
+ },
+ {
+  "identity": "acpufreeze_01_bg",
+  "disk_file": "E:\\test\\nikke_extract\\CG\\01_活动剧情CG\\ACPUFreeze\\EventScene_ACPUFreeze_01_bg.png",
+  "disk_dims": [
+   1024,
+   1024
+  ],
+  "hd": {
+   "pool": "dp",
+   "quality": "hd",
+   "chunks": 12,
+   "chunks_present_in_cidx": 12,
+   "rebuild_ok": true,
+   "textures": [
+    {
+     "name": "EventScene_ACPUFreeze_01_bg",
+     "w": 1024,
+     "h": 1024
+    }
+   ]
+  },
+  "sd": {
+   "pool": "dp",
+   "quality": "sd",
+   "chunks": 12,
+   "chunks_present_in_cidx": 11,
+   "rebuild_ok": false,
+   "textures": []
+  }
+ },
+ {
+  "identity": "voltroad_sd_01_01",
+  "disk_file": "E:\\test\\nikke_extract\\CG\\01_活动剧情CG\\voltroad\\EventScene_voltroad_SD_01_01.png",
+  "disk_dims": [
+   1024,
+   1024
+  ],
+  "hd": {
+   "pool": "dp",
+   "quality": "hd",
+   "chunks": 10,
+   "chunks_present_in_cidx": 10,
+   "rebuild_ok": true,
+   "textures": [
+    {
+     "name": "EventScene_voltroad_SD_01_01",
+     "w": 1024,
+     "h": 1024
+    }
+   ]
+  },
+  "sd": {
+   "pool": "dp",
+   "quality": "sd",
+   "chunks": 3,
+   "chunks_present_in_cidx": 0,
+   "rebuild_ok": false,
+   "textures": []
+  }
+ },
+ {
+  "identity": "chap_02_after_01",
+  "disk_file": "E:\\test\\nikke_extract\\CG\\02_主线剧情CG\\第02章\\EventScene_Chap_02_After_01.png",
+  "disk_dims": [
+   2048,
+   2048
+  ],
+  "hd": {
+   "pool": "dp",
+   "quality": "hd",
+   "chunks": 9,
+   "chunks_present_in_cidx": 9,
+   "rebuild_ok": true,
+   "textures": [
+    {
+     "name": "EventScene_Chap_02_After_01",
+     "w": 1024,
+     "h": 1024
+    }
+   ]
+  },
+  "sd": {
+   "pool": "dp",
+   "quality": "sd",
+   "chunks": 9,
+   "chunks_present_in_cidx": 8,
+   "rebuild_ok": false,
+   "textures": []
+  },
+  "other_sources": [
+   {
+    "pool": "core",
+    "quality": "none",
+    "chunks": 9,
+    "chunks_present_in_cidx": 9,
+    "rebuild_ok": true,
+    "textures": [
+     {
+      "name": "fx_hs_ptc_05",
+      "w": 128,
+      "h": 128
+     },
+     {
+      "name": "fx_livewallpaper_outgra",
+      "w": 512,
+      "h": 512
+     },
+     {
+      "name": "fx_flare_atlas_01",
+      "w": 512,
+      "h": 512
+     },
+     {
+      "name": "fx_solid_01",
+      "w": 64,
+      "h": 64
+     }
+    ]
+   },
+   {
+    "pool": "core",
+    "quality": "none",
+    "chunks": 43,
+    "chunks_present_in_cidx": 43,
+    "rebuild_ok": true,
+    "textures": [
+     {
+      "name": "EventScene_Chap_02_After_01",
+      "w": 2048,
+      "h": 2048
+     }
+    ]
+   }
+  ]
+ }
+]

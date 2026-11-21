@@ -1,0 +1,13 @@
+{
+ "candidates_total": 1245,
+ "already_in_cg": 1244,
+ "missing_total": 1,
+ "missing_by_folder": {
+  "02_主线剧情CG/第22章": 1
+ },
+ "missing_voltroad": 0,
+ "spine_identities": 113,
+ "spine_covered": 112,
+ "spine_missing": 1,
+ "livewallpaper_only_identities": 244
+}

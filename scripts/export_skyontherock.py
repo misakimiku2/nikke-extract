@@ -16,6 +16,7 @@ import re
 import sqlite3
 from pathlib import Path
 
+import cg_refs
 from text_clean import clean, speaker_of, speaker_of_type, record_type
 
 BASE = Path(__file__).resolve().parents[1]
@@ -134,6 +135,69 @@ def parse_chapter(group, names, store, table="Locale_SubScenario"):
     return out
 
 
+def scan_cg(group, store, bg_names=None):
+    """CG 转场/背景/特效独立扫描：不按 Locale_SubScenario 过滤，全部 Locale 锚点都算记录边界。
+
+    返回 {行号: {"cg": [...] / "bg": [...] / "fx": [...]}}，各自只在发生变化的行上有条目。
+    """
+    path = STATIC / f"EventScenarioDialogTable.{group}.mpk"
+    raw = path.read_bytes()
+    toks = [(m.start(), m.end(), m.group().decode("ascii", "replace"))
+            for m in TOKEN.finditer(raw)]
+
+    def group_ok(tok, g):
+        return tok == g or (tok.startswith(g) and len(tok) <= len(g) + 2)
+
+    recs = []
+    for i, (_s, _e, t) in enumerate(toks):
+        if not t.startswith("Locale_") or ":" not in t:
+            continue
+        gi = next((j for j in range(i - 1, max(-1, i - 80), -1)
+                   if group_ok(toks[j][2], group)), None)
+        if gi is not None:
+            recs.append((i, gi))
+    cg_meta: dict[int, dict] = {}
+    pending = pending_bg = pending_fx = ()
+    prev_cg = prev_bg = prev_fx = None
+    for k, (i, gi) in enumerate(recs):
+        span_end = toks[recs[k + 1][1]][0] if k + 1 < len(recs) else len(raw)
+        # 字面 token + 演出位 id 间接引用的动态 CG
+        cgs = cg_refs.merge_cgs(
+            cg_refs.collect_cgs(raw, toks[gi][0], span_end),
+            cg_refs.collect_movie_cgs(raw, toks[gi][0], span_end))
+        bgs = cg_refs.collect_bgs(raw, toks[gi][0], span_end, bg_names or set())
+        fxs = cg_refs.collect_fx(raw, toks[gi][0], span_end)
+        tbl, key = toks[i][2].split(":", 1)
+        if store.get(tbl, key) is None and not cgs and not bgs and not fxs:
+            pending = cgs or pending
+            pending_bg = bgs or pending_bg
+            pending_fx = fxs or pending_fx
+            continue
+        m = re.search(r"_(\d+)$", key)
+        if not m:
+            pending = cgs or pending
+            pending_bg = bgs or pending_bg
+            pending_fx = fxs or pending_fx
+            continue
+        n = int(m.group(1))
+        eff = cgs or pending
+        pending = ()
+        eff_bg = bgs or pending_bg
+        pending_bg = ()
+        eff_fx = fxs or pending_fx
+        pending_fx = ()
+        if cg_refs.changed(prev_cg, eff):
+            cg_meta.setdefault(n, {}).update({"cg": list(eff)})
+            prev_cg = eff
+        if eff_bg and cg_refs.changed(prev_bg, eff_bg):
+            cg_meta.setdefault(n, {}).update({"bg": list(eff_bg)})
+            prev_bg = eff_bg
+        if eff_fx and cg_refs.changed(prev_fx, eff_fx):
+            cg_meta.setdefault(n, {}).update({"fx": list(eff_fx)})
+            prev_fx = eff_fx
+    return cg_meta
+
+
 def main():
     lc = find_locale("Locale_Character")
     sub = find_locale("Locale_SubScenario")
@@ -143,6 +207,8 @@ def main():
     store.add("Locale_SubScenario", sub)
     store.add("Locale_MainScenario", main_loc)
     names = build_names(lc)
+    static_cg, dynamic_cg = cg_refs.load_cg_library()
+    bg_names = cg_refs.load_bg_names()
     lines = [l.strip() for l in GROUP_CSV.read_text(encoding="utf-8-sig").splitlines() if l.strip()]
     chapters = [l for l in lines if l.startswith(PREFIX)]
     print("chapters:", len(chapters))
@@ -171,6 +237,11 @@ def main():
         title = (trow[0] if trow and trow[0] else "").strip()
 
         meta = parse_chapter(group, names, store)
+        for n, extra in scan_cg(group, store, bg_names).items():
+            if n in meta:
+                meta[n].update(extra)
+            else:
+                meta[n] = {"key": f"{group}_{n}", **extra}
         rows = sub.execute(
             'SELECT "Key","zh-CN","en","ja" FROM "Locale_SubScenario" WHERE "Key" LIKE ?',
             (group + "_%",),
@@ -192,20 +263,35 @@ def main():
             md.append("")
 
         lines_out = []
-        for n in sorted(text_by_n):
-            r = text_by_n[n]
+        # 带 cg 但没有台词文本的记录也要遍历，转场标记不能丢
+        for n in sorted(set(text_by_n)
+                        | {m for m, v in meta.items() if v.get("cg") or v.get("bg") or v.get("fx")}):
+            r = text_by_n.get(n)
             info = meta.get(n, {})
             sp = info.get("speaker")
+            if r is None:
+                if info.get("bg") or info.get("fx"):
+                    md += cg_refs.scene_marker_md(info.get("bg"), info.get("fx"), static_cg, up=".")
+                if info.get("cg"):
+                    md += cg_refs.marker_md(info["cg"], static_cg, dynamic_cg, up=".")
+                continue
             text = (r[1] or "").strip()
-            lines_out.append({
+            line = {
                 "n": n, "key": r[0],
                 "speaker": sp, "speaker_id": info.get("speaker_id"),
                 "portrait": info.get("portrait"), "portrait_id": info.get("portrait_id"),
                 "zh-CN": clean(r[1]), "en": r[2], "ja": r[3],
-            })
+            }
+            if info.get("cg"):
+                line["cg"] = info["cg"]
+            lines_out.append(line)
             total += 1
             if sp:
                 with_sp += 1
+            if info.get("bg") or info.get("fx"):
+                md += cg_refs.scene_marker_md(info.get("bg"), info.get("fx"), static_cg, up=".")
+            if info.get("cg"):
+                md += cg_refs.marker_md(info["cg"], static_cg, dynamic_cg, up=".")
             if not text:
                 continue
             md.append(f"**{sp}**：{text}" if sp else text)

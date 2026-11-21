@@ -9,6 +9,9 @@ Categories:
   支线故事            SideStoryScenarioDialogTable / SideStorySpotDialogTable
   短信与日常对话       Messenger / FieldTalk / Balloon / Echo / Event*Dialog (single-file tables)
 
+CG 转场：记录携带的 `EventScene_*` token 保留为行级 `cg` 字段（只在变化行），
+Markdown 在对应台词前插入 `🖼 CG` 标记并链接 CG/ 成品图（相对路径 ../..）。
+
 All inputs are local decrypted data; read-only, no game process access.
 """
 import glob
@@ -19,6 +22,7 @@ from collections import defaultdict, Counter
 from pathlib import Path
 
 from text_clean import clean, record_type, speaker_of, speaker_of_type
+import cg_refs
 import event_registry
 import story_registry
 
@@ -160,7 +164,7 @@ def bucket_of(cat, key):
     return key
 
 
-def parse(path, group, names, store):
+def parse(path, group, names, store, spine=None, bg_names=None, static_cg=None):
     raw = path.read_bytes()
     toks = [(m.start(), m.end(), m.group().decode("ascii", "replace"))
             for m in TOKEN.finditer(raw)]
@@ -197,21 +201,45 @@ def parse(path, group, names, store):
     if group:
         # 以 Locale 标记为锚点：行 key 后面常粘着二进制字节（_1A），
         # 按「行 key + 数字」匹配会整段漏掉（NO CALLER ID 只剩几行就是这个原因）。
+        recs = []                       # (locale_idx, group_anchor_idx)
         for i, (_s, _e, t) in enumerate(toks):
             if not t.startswith("Locale_") or ":" not in t:
-                continue
-            table, key = t.split(":", 1)
-            text = store.get(table, key)
-            if text is None:
                 continue
             gi = next((j for j in range(i - 1, max(-1, i - 80), -1)
                        if group_ok(toks[j][2], group)), None)
             if gi is None:
                 continue
+            recs.append((i, gi))
+        pending_cg = ()
+        pending_fx = ()
+        cur_bg = ()                     # 剧情背景随记录持续，直到下一条背景 token
+        for k, (i, gi) in enumerate(recs):
+            table, key = toks[i][2].split(":", 1)
+            text = store.get(table, key)
+            # 记录边界 = 本记录的 group 锚 -> 下一条记录的 group 锚；
+            # CG token 可能在 Locale key 前后，整段收集才不漏
+            span_end = toks[recs[k + 1][1]][0] if k + 1 < len(recs) else len(raw)
+            # 字面 token + 演出位 id 间接引用的动态 CG
+            cgs = cg_refs.merge_cgs(
+                cg_refs.collect_cgs(raw, toks[gi][0], span_end),
+                cg_refs.collect_movie_cgs(raw, toks[gi][0], span_end))
+            bgs = cg_refs.collect_bgs(raw, toks[gi][0], span_end, bg_names or set())
+            fxs = cg_refs.collect_fx(raw, toks[gi][0], span_end)
+            if bgs:
+                cur_bg = bgs
+            if text is None:
+                pending_cg = cgs or pending_cg
+                pending_fx = fxs or pending_fx
+                continue
             pre = [x for _o, _e, x in toks[gi + 1:i]]
             m = re.search(r"_(\d+)$", key)
             n = int(m.group(1)) if m else len(lines) + 1
             push(key, table, text, pre, n, toks[gi][0])
+            lines[-1]["_rawcg"] = cgs or pending_cg
+            lines[-1]["_rawbg"] = bgs or cur_bg
+            lines[-1]["_rawfx"] = fxs or pending_fx
+            pending_cg = ()
+            pending_fx = ()
     else:
         lk_idx = [i for i, (_o, _e, s) in enumerate(toks) if s.startswith("Locale_")]
         for k, i in enumerate(lk_idx):
@@ -225,8 +253,37 @@ def parse(path, group, names, store):
                 continue
             pre = [x for _o, _e, x in toks[prev:i]]
             push(key, table, text, pre, k + 1)
+            lines[-1]["_rawcg"] = cg_refs.merge_cgs(
+                cg_refs.collect_cgs(raw, toks[prev][0], toks[i][1]),
+                cg_refs.collect_movie_cgs(raw, toks[prev][0], toks[i][1]))
+            lines[-1]["_rawbg"] = cg_refs.collect_bgs(raw, toks[prev][0], toks[i][1],
+                                                      bg_names or set())
+            lines[-1]["_rawfx"] = cg_refs.collect_fx(raw, toks[prev][0], toks[i][1])
 
     lines.sort(key=lambda x: x["n"])
+    # 转场判定放排序后：cg / bg / fx 各自独立与上一条有效状态比较，变化才落字段；
+    # 动态 CG 行同时解析出 spine 模型(cgd)与应铺背景(cgb)
+    prev_cg = prev_bg = prev_fx = None
+    for l in lines:
+        cur = tuple(l.pop("_rawcg", ()) or ())
+        curbg = tuple(l.pop("_rawbg", ()) or ())
+        curfx = tuple(l.pop("_rawfx", ()) or ())
+        if cur and cur != (prev_cg or ()):
+            l["cg"] = list(cur)
+            if spine:
+                for t in cur:
+                    dyn = cg_refs.resolve_dynamic(t, spine, static_cg or {}, curbg)
+                    if dyn:
+                        l["cgd"], l["cgb"] = dyn
+                        break
+        if curbg and cg_refs.changed(prev_bg, curbg):
+            l["bg"] = list(curbg)
+            prev_bg = curbg
+        if curfx and cg_refs.changed(prev_fx, curfx):
+            l["fx"] = list(curfx)
+            prev_fx = curfx
+        if cur:
+            prev_cg = cur
     return lines
 
 
@@ -234,6 +291,9 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     names = build_names()
     store = LocaleStore()
+    static_cg, dynamic_cg = cg_refs.load_cg_library()
+    spine_models = cg_refs.load_spine_models()
+    bg_names = cg_refs.load_bg_names()
 
     buckets = defaultdict(lambda: defaultdict(list))  # cat -> bucket -> [(group, lines)]
     files = sorted(STATIC.glob("*DialogTable*.mpk"))
@@ -244,7 +304,7 @@ def main():
         if cat is None:
             skipped += 1
             continue
-        lines = parse(f, key, names, store)
+        lines = parse(f, key, names, store, spine_models, bg_names, static_cg)
         if not lines:
             continue
         if key is None:  # single-file table -> split by session key
@@ -375,6 +435,12 @@ def main():
                          f"<!-- group: {g} -->", ""]
                 for l in lines:
                     t = (l["zh-CN"] or "").strip()
+                    if l.get("bg") or l.get("fx"):
+                        body += cg_refs.scene_marker_md(l.get("bg"), l.get("fx"), static_cg, up="../..")
+                    if l.get("cg"):
+                        # CG 转场标记：空台词的节拍也要落标记，不能丢
+                        body += cg_refs.marker_md(l["cg"], static_cg, dynamic_cg, up="../..",
+                                                  model=l.get("cgd", ""), bg=l.get("cgb", ""))
                     if not t:
                         continue
                     body.append(f"**{l['speaker']}**：{t}" if l["speaker"] else t)
@@ -416,6 +482,7 @@ def main():
              "  只有一个 ID 的是画面立绘，属于旁白 / 无名字台词。JSON 中另存 `portrait` 字段。",
              "- 正文按 `Locale_MainScenario / SubScenario / NikkeEpisode / Counseling / SuddenStory / SuddenMessage / SideStory` 等表自动路由。",
              "- 短信、场地对话、气泡对话等单文件表没有分组布局，按文本出现顺序输出。",
+             "- CG 转场：`cg` 字段 / `🖼 CG` 标记只出现在画面切到新 CG 的那一行（JSON 与 Markdown 同口径）。",
              "- 本批 JSON 为控制体积只含 zh-CN + speaker/portrait；需要 en/ja 三语对照可再导。",
              "- 全部来源为本机静态数据，只读；未修改游戏、未读取进程内存。", ""]
     (OUT / "00_总目录.md").write_text("\n".join(root), encoding="utf-8")

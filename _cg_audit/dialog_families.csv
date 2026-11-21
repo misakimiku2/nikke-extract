@@ -1,0 +1,27 @@
+﻿族名,Group.csv,组数,含CG组数,CG引用数,是否被现有索引覆盖,mpk文件数,Group.csv外mpk数,备注
+ScenarioDialogTable,ScenarioDialog.Group.csv,1218,171,583,是,1239,21,有 21 个 mpk 不在 Group.csv 中（其中 0 个含 CG 引用）
+EventScenarioDialogTable,EventScenarioDialog.Group.csv,2565,367,1083,是,2594,29,有 29 个 mpk 不在 Group.csv 中（其中 1 个含 CG 引用）
+AttractiveScenarioDialogTable,AttractiveScenarioDialog.Group.csv,1114,7,12,是,1115,1,有 1 个 mpk 不在 Group.csv 中（其中 0 个含 CG 引用）
+SideStoryScenarioDialogTable,SideStoryScenarioDialog.Group.csv,96,33,92,否,99,3,有 3 个 mpk 不在 Group.csv 中（其中 0 个含 CG 引用）
+SideStorySpotDialogTable,SideStorySpotDialog.Group.csv,6,0,0,否,6,0,
+AttractiveCounselDialogTable,AttractiveCounselDialog.Group.csv,3400,0,0,否,3420,20,有 20 个 mpk 不在 Group.csv 中（其中 0 个含 CG 引用）
+ArchiveProgressEventTable,ArchiveProgressEvent.Group.csv,17,0,0,否（非Dialog族）,17,0,非Dialog：活动进度表；GroupDict.csv=id→event_id 映射(4455行)
+ProgressEventTable,ProgressEvent.Group.csv,31,0,0,否（非Dialog族）,32,1,非Dialog：当前活动进度表；GroupDict.csv=id→event_id 映射(7745行)
+WaveDataTable,WaveData.Group.csv,175,0,0,否（非Dialog族）,175,0,非Dialog：波次数据；GroupDict.csv=stage_id→group_id 映射(17801行)
+BalloonDialogTable,（无）,0,0,0,否,1,,单表族，无 Group.csv
+DialogThemeTable,（无）,0,0,0,否,1,,单表族，无 Group.csv
+EchoDialogTable,（无）,0,0,0,否,1,,单表族，无 Group.csv
+EchoDialogNPCTable,（无）,0,0,0,否,1,,单表族，无 Group.csv
+EchoDialogFieldTriggerTable,（无）,0,0,0,否,1,,单表族，无 Group.csv
+FieldTalkDialogTable,（无）,0,0,0,否,1,,单表族，无 Group.csv
+MessengerDialogTable,（无）,0,0,0,否,1,,单表族，无 Group.csv
+EventNKSDialogTable,（无）,0,0,0,否,1,,单表族，无 Group.csv
+EventPirateCafeDialogTable,（无）,0,0,0,否,1,,单表族，无 Group.csv
+EventPirateCafeDialogGroupTable,（无）,0,0,0,否,1,,单表族，无 Group.csv
+EventRebuildEdenDialogTable,（无）,0,0,0,否,1,,单表族，无 Group.csv
+EventTowerDefenseBurstDialogTable,（无）,0,0,0,否,1,,单表族，无 Group.csv
+EventDatingSimDialogConditionTable,（无）,0,0,0,否,1,,单表族，无 Group.csv
+EventDatingSimDialogEventTable,（无）,0,1,4,否,1,,单表族，无 Group.csv
+EventDatingSimDialogScheduleTable,（无）,0,0,0,否,1,,单表族，无 Group.csv
+SimulationRoomDialogueBattleTable,（无）,0,0,0,否,1,,单表族，无 Group.csv
+SimulationRoomDialogueLocationTable,（无）,0,0,0,否,1,,单表族，无 Group.csv

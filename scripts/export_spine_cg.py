@@ -83,14 +83,25 @@ def main():
             skel_name = base + ".skel"
             png_name = base + ".png"
 
-            if skel_name not in assets:
-                stats["no_skel"] += 1
-                continue
+            # 骨架文件名不一定和 atlas 同名：例如 EventScene_Main_01_02.atlas
+            # 配的是 c013_event_01.skel。旧逻辑按 base+.skel 找不到就整包跳过，
+            # 导致这个动态 CG 从未导出（#17/#18「目标/英雄」只有背景板没有模型）。
+            # 这里允许包内唯一的 .skel 作为骨架，落盘时统一改名为 base.skel。
+            src_skel = skel_name
+            if src_skel not in assets:
+                skels = [k for k in assets if k.endswith(".skel")]
+                if not skels:
+                    stats["no_skel"] += 1
+                    continue
+                src_skel = skels[0] if len(skels) == 1 else next(
+                    (k for k in skels if k[:-5].lower() in base.lower() or base.lower() in k[:-5].lower()),
+                    skels[0])
+
             folder = OUT / re.sub(r"[^\w.-]+", "_", base)
             folder.mkdir(parents=True, exist_ok=True)
 
             (folder / atlas_name).write_bytes(text_bytes(assets[atlas_name][1]))
-            (folder / skel_name).write_bytes(text_bytes(assets[skel_name][1]))
+            (folder / skel_name).write_bytes(text_bytes(assets[src_skel][1]))
 
             # UnityPy drops the file extension from Texture2D.m_Name, so match
             # on the bare stem first, then fall back to the largest texture.

@@ -12,12 +12,14 @@ import re
 import sqlite3
 from pathlib import Path
 
+import cg_refs
+import locale_db
 from text_clean import clean, speaker_of
 
 BASE = Path(__file__).resolve().parents[1]
 STATIC = BASE / "staticdata"
-LOCALE_MAIN = BASE / "decrypted" / "4f4bdc30e957b0f8157a2ec7b399f545.dec"
-LOCALE_CHAR = BASE / "decrypted" / "e6059faf00471aa305c16cabe88871bb.dec"
+LOCALE_MAIN = locale_db.find("Locale_MainScenario")
+LOCALE_CHAR = locale_db.find("Locale_Character")
 GROUP_CSV = STATIC / "EventScenarioDialog.Group.csv"
 OUT_MD = BASE / "NIKKE_最新活动剧情_玛丽安_简中.md"
 OUT_JSON = BASE / "NIKKE_最新活动剧情_玛丽安_结构化.json"
@@ -33,7 +35,7 @@ def build_names():
         m = re.match(r"^Locale_Character:([A-Za-z0-9_]+)_name", s)
         if m and i > 0:
             pairs[toks[i - 1]] = m.group(1)
-    conn = sqlite3.connect(LOCALE_CHAR)
+    conn = sqlite3.connect(f"file:{LOCALE_CHAR}?mode=ro", uri=True)
     names = {}
     for rid, key in pairs.items():
         row = conn.execute(
@@ -64,18 +66,29 @@ def label_of(group):
     return part, tail
 
 
-def parse_chapter(group, names):
+def parse_chapter(group, names, bg_names=None):
     path = STATIC / f"EventScenarioDialogTable.{group}.mpk"
     raw = path.read_bytes()
     toks = [(m.start(), m.group().decode("ascii", "replace")) for m in TOKEN.finditer(raw)]
     id_re = re.compile(re.escape(group) + r"_(\d+)$")
     anchors = [(o, int(id_re.match(s).group(1))) for o, s in toks if id_re.fullmatch(s)]
     out = {}
+    prev_cg = prev_bg = prev_fx = None
+    pending_cg = pending_bg = pending_fx = ()
     for k, (start, n) in enumerate(anchors):
         end = anchors[k + 1][0] if k + 1 < len(anchors) else len(raw)
         seg = [s for o, s in toks if start <= o < end]
+        # 字面 token + 演出位 id 间接引用的动态 CG
+        cgs = cg_refs.merge_cgs(
+            cg_refs.collect_cgs(raw, start, end),
+            cg_refs.collect_movie_cgs(raw, start, end))
+        bgs = cg_refs.collect_bgs(raw, start, end, bg_names or set())
+        fxs = cg_refs.collect_fx(raw, start, end)
         lk = next((i for i, s in enumerate(seg) if s.startswith("Locale_MainScenario:")), None)
         if lk is None:
+            pending_cg = cgs or pending_cg
+            pending_bg = bgs or pending_bg
+            pending_fx = fxs or pending_fx
             continue
         key = seg[lk][len("Locale_MainScenario:"):]
         # tokens before the localkey: [portrait/character id, speaker-display id]
@@ -93,12 +106,29 @@ def parse_chapter(group, names):
             portrait_id=pid,
             portrait=names.get(pid) if pid else None,
         )
+        eff_cg = cgs or pending_cg
+        pending_cg = ()
+        eff_bg = bgs or pending_bg
+        pending_bg = ()
+        eff_fx = fxs or pending_fx
+        pending_fx = ()
+        if cg_refs.changed(prev_cg, eff_cg):
+            out[n]["cg"] = list(eff_cg)
+            prev_cg = eff_cg
+        if eff_bg and cg_refs.changed(prev_bg, eff_bg):
+            out[n]["bg"] = list(eff_bg)
+            prev_bg = eff_bg
+        if eff_fx and cg_refs.changed(prev_fx, eff_fx):
+            out[n]["fx"] = list(eff_fx)
+            prev_fx = eff_fx
     return out
 
 
 def main():
     names = build_names()
-    main_conn = sqlite3.connect(LOCALE_MAIN)
+    static_cg, dynamic_cg = cg_refs.load_cg_library()
+    bg_names = cg_refs.load_bg_names()
+    main_conn = sqlite3.connect(f"file:{LOCALE_MAIN}?mode=ro", uri=True)
     main_conn.row_factory = sqlite3.Row
     chapters = chapter_order()
 
@@ -125,7 +155,7 @@ def main():
         ).fetchone()
         title = (trow[0] if trow and trow[0] else "").strip()
 
-        meta = parse_chapter(group, names)
+        meta = parse_chapter(group, names, bg_names)
         rows = main_conn.execute(
             'SELECT "Key","zh-CN","en","ja" FROM "Locale_MainScenario" WHERE "Key" LIKE ?',
             (group + "_%",),
@@ -147,20 +177,35 @@ def main():
             md.append("")
 
         lines = []
-        for n in sorted(text_by_n):
-            r = text_by_n[n]
+        # 带 cg 但没有台词文本的记录也要遍历，转场标记不能丢
+        for n in sorted(set(text_by_n) | {m for m, v in meta.items() if v.get("cg")}):
+            r = text_by_n.get(n)
             info = meta.get(n, {})
             sp = info.get("speaker")
+            if r is None:
+                # 只落场景/CG 标记，没有台词行
+                if info.get("bg") or info.get("fx"):
+                    md += cg_refs.scene_marker_md(info.get("bg"), info.get("fx"), static_cg, up=".")
+                if info.get("cg"):
+                    md += cg_refs.marker_md(info["cg"], static_cg, dynamic_cg, up=".")
+                continue
             text = (r["zh-CN"] or "").strip()
-            lines.append({
+            line = {
                 "n": n, "key": r["Key"],
                 "speaker": sp, "speaker_id": info.get("speaker_id"),
                 "portrait": info.get("portrait"), "portrait_id": info.get("portrait_id"),
                 "zh-CN": clean(r["zh-CN"]), "en": r["en"], "ja": r["ja"],
-            })
+            }
+            if info.get("cg"):
+                line["cg"] = info["cg"]
+            lines.append(line)
             total += 1
             if sp:
                 with_sp += 1
+            if info.get("bg") or info.get("fx"):
+                md += cg_refs.scene_marker_md(info.get("bg"), info.get("fx"), static_cg, up=".")
+            if info.get("cg"):
+                md += cg_refs.marker_md(info["cg"], static_cg, dynamic_cg, up=".")
             if not text:
                 continue
             md.append(f"**{sp}**：{text}" if sp else text)

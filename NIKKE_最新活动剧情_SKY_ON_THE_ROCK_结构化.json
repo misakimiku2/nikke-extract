@@ -16008,7 +16008,10 @@
           "portrait_id": null,
           "zh-CN": "锵——锵锵——",
           "en": "*Zzing! Skreeeee!*",
-          "ja": "ギュイーン、ジャジャジャン――"
+          "ja": "ギュイーン、ジャジャジャン――",
+          "cg": [
+            "EventScene_skyontherock_01"
+          ]
         },
         {
           "n": 68,

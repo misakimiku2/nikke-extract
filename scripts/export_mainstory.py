@@ -7,6 +7,9 @@ All data is local & read-only. Layout:
   Locale_Stage / ScenarioCharacterSettingTable -> chapter & character names
 
 Outputs to 主线剧情/ : per-chapter .md, a combined .md, an index .md, and a full .json.
+
+CG 转场：记录携带的 `EventScene_*` token 会被保留——JSON 行内有 `cg` 字段
+（只在 CG 变化的行上），Markdown 在对应台词前插入 `🖼 CG` 标记并链接成品图。
 """
 import json
 import re
@@ -14,14 +17,17 @@ import sqlite3
 from collections import defaultdict
 from pathlib import Path
 
+import cg_refs
+import locale_db
 from text_clean import clean, record_type, speaker_of, speaker_of_type
 
 BASE = Path(__file__).resolve().parents[1]
 STATIC = BASE / "staticdata"
 OUT = BASE / "主线剧情"
-LOCALE_MAIN = BASE / "decrypted" / "4f4bdc30e957b0f8157a2ec7b399f545.dec"
-LOCALE_CHAR = BASE / "decrypted" / "e6059faf00471aa305c16cabe88871bb.dec"
-LOCALE_STAGE = BASE / "decrypted" / "2f3134ea528251fb735273e764276059.dec"
+# NKDB 解密文件名是内容 hash，游戏更新会变——按表名动态定位（2026-11-19 刷新时旧 hash 全部失效）
+LOCALE_MAIN = locale_db.find("Locale_MainScenario")
+LOCALE_CHAR = locale_db.find("Locale_Character")
+LOCALE_STAGE = locale_db.find("Locale_Stage")
 GROUP_CSV = STATIC / "ScenarioDialog.Group.csv"
 
 TOKEN = re.compile(rb"[ -~]{4,}")
@@ -36,7 +42,7 @@ def build_names():
         m = re.match(r"^Locale_Character:([A-Za-z0-9_]+)_name", s)
         if m and i > 0:
             pairs[toks[i - 1]] = m.group(1)
-    conn = sqlite3.connect(LOCALE_CHAR)
+    conn = sqlite3.connect(f"file:{LOCALE_CHAR}?mode=ro", uri=True)
     names = {}
     for rid, key in pairs.items():
         row = conn.execute('SELECT "zh-CN" FROM "Locale_Character" WHERE "Key"=?',
@@ -47,15 +53,13 @@ def build_names():
 
 
 def chapter_titles():
-    conn = sqlite3.connect(LOCALE_STAGE)
-    d = dict(conn.execute('SELECT "Key","zh-CN" FROM "Locale_Stage"'))
-    conn.close()
+    d = locale_db.load("Locale_Stage")
     # chapter 1 -> chapter_name_00, chapter 50 -> chapter_name_49
     return {n: (d.get(f"chapter_name_{n-1:02d}") or "") for n in range(1, 51)}
 
 
 def load_texts():
-    conn = sqlite3.connect(LOCALE_MAIN)
+    conn = sqlite3.connect(f"file:{LOCALE_MAIN}?mode=ro", uri=True)
     conn.row_factory = sqlite3.Row
     return {r["Key"]: r for r in conn.execute(
         'SELECT "Key","zh-CN","en","ja" FROM "Locale_MainScenario"')}
@@ -79,7 +83,7 @@ CSV_GROUPS = {norm_group(l.strip()) for l in GROUP_CSV.read_text(encoding="utf-8
               if l.strip().startswith("d_main_")}
 
 
-def parse_group(group, names, texts):
+def parse_group(group, names, texts, spine=None, bg_names=None, static_cg=None):
     path = STATIC / f"ScenarioDialogTable.{group}.mpk"
     raw = path.read_bytes()
     toks = [(m.start(), m.group().decode("ascii", "replace")) for m in TOKEN.finditer(raw)]
@@ -101,12 +105,28 @@ def parse_group(group, names, texts):
         if ng == want or (ng not in CSV_GROUPS and chapter_block(ng) == block):
             anchors.append(o)
     lines = []
+    prev_cg = None
+    pending_cg = ()          # 无台词记录携带的 CG 顺延到下一条有台词的记录
+    cur_bg = ()              # 剧情背景随记录持续，直到下一条背景 token
+    prev_bg = prev_fx = None  # 已落字段的背景/特效状态（转场判定基准）
+    pending_bg = pending_fx = ()
     for n, start in enumerate(anchors, start=1):
         k = n - 1
         end = anchors[k + 1] if k + 1 < len(anchors) else len(raw)
         seg = [(o, s) for o, s in toks if start <= o < end]
+        # 字面 EventScene token + 演出位 id 间接引用的动态 CG（位 id → spine 模型）
+        cgs = cg_refs.merge_cgs(
+            cg_refs.collect_cgs(raw, start, end),
+            cg_refs.collect_movie_cgs(raw, start, end))
+        bgs = cg_refs.collect_bgs(raw, start, end, bg_names or set())
+        fxs = cg_refs.collect_fx(raw, start, end)
+        if bgs:
+            cur_bg = bgs
         lk = next((i for i, (_o, s) in enumerate(seg) if s.startswith("Locale_MainScenario:")), None)
         if lk is None:
+            pending_cg = cgs or pending_cg
+            pending_bg = bgs or pending_bg
+            pending_fx = fxs or pending_fx
             continue
         key = seg[lk][1][len("Locale_MainScenario:"):]
         pre = [s for _o, s in seg[2:lk]]
@@ -123,22 +143,58 @@ def parse_group(group, names, texts):
         pid = chars[0] if chars else None
         r = texts.get(key)
         if r is None:
+            pending_cg = cgs or pending_cg
+            pending_bg = bgs or pending_bg
+            pending_fx = fxs or pending_fx
             continue
-        lines.append({
+        eff_cg = cgs or pending_cg
+        pending_cg = ()
+        eff_bg = bgs or pending_bg
+        pending_bg = ()
+        eff_fx = fxs or pending_fx
+        pending_fx = ()
+        line = {
             "n": n, "key": key,
             "speaker": speaker,
             "speaker_id": sid,
             "portrait": names.get(pid) if pid else None,
             "portrait_id": pid,
             "zh-CN": clean(r["zh-CN"]), "en": r["en"], "ja": r["ja"],
-        })
+        }
+        # 只在 CG 发生变化（含首次出现）的行上记录，与对照索引的转场口径一致
+        if cg_refs.changed(prev_cg, eff_cg):
+            line["cg"] = list(eff_cg)
+            prev_cg = eff_cg
+        # 动态 CG 解析：token 是 spine 模型名或其 X_bg 背景板时，同时给出
+        # 模型名(cgd)与应铺背景(cgb)，剧情阅读器才能「模型+背景」完整呈现
+        if spine:
+            for t in eff_cg:
+                dyn = cg_refs.resolve_dynamic(t, spine, static_cg or {}, cur_bg)
+                if dyn:
+                    line["cgd"], line["cgb"] = dyn
+                    break
+        # 背景/特效变化行：`bg` 含 black/none 等场景切换信号，`fx` 是叠加特效层
+        if eff_bg and cg_refs.changed(prev_bg, eff_bg):
+            line["bg"] = list(eff_bg)
+            prev_bg = eff_bg
+        if eff_fx and cg_refs.changed(prev_fx, eff_fx):
+            line["fx"] = list(eff_fx)
+            prev_fx = eff_fx
+        lines.append(line)
     return lines
 
 
-def fmt_lines(lines):
+def fmt_lines(lines, static_cg, dynamic_cg):
     out = []
     for l in lines:
         t = (l["zh-CN"] or "").strip()
+        if not t and not l.get("bg") and not l.get("fx") and not l.get("cg"):
+            continue
+        if l.get("bg") or l.get("fx"):
+            out += cg_refs.scene_marker_md(l.get("bg"), l.get("fx"), static_cg)
+        if l.get("cg"):
+            out += cg_refs.marker_md(l["cg"], static_cg, dynamic_cg,
+                                     model=l.get("cgd", ""), bg=l.get("cgb", ""))
         if not t:
             continue
         out.append(f"**{l['speaker']}**：{t}" if l["speaker"] else t)
@@ -151,6 +207,9 @@ def main():
     names = build_names()
     titles = chapter_titles()
     texts = load_texts()
+    static_cg, dynamic_cg = cg_refs.load_cg_library()
+    spine_models = cg_refs.load_spine_models()
+    bg_names = cg_refs.load_bg_names()
 
     groups = [l.strip() for l in GROUP_CSV.read_text(encoding="utf-8-sig").splitlines()
               if l.strip().startswith("d_main_")]
@@ -175,11 +234,11 @@ def main():
             "",
         ]
         for idx, g in enumerate(by_ch[ch], 1):
-            lines = parse_group(g, names, texts)
+            lines = parse_group(g, names, texts, spine_models, bg_names, static_cg)
             ch_lines.extend(lines)
             label = g[len("d_main_"):]
             body += [f"## 段落 {idx:02d} · {label}", "", f"<!-- group: {g} -->", ""]
-            body += fmt_lines(lines)
+            body += fmt_lines(lines, static_cg, dynamic_cg)
         body.append("---")
         body.append("")
 
@@ -210,7 +269,7 @@ def main():
     for item in all_chapters:
         sections = []
         for g in by_ch[item["chapter"]]:
-            sections.append({"group": g, "lines": parse_group(g, names, texts)})
+            sections.append({"group": g, "lines": parse_group(g, names, texts, spine_models, bg_names, static_cg)})
         full["chapters"].append({k: item[k] for k in ("chapter", "title", "groups", "lines", "named", "file")}
                                 | {"sections": sections})
     (OUT / "主线剧情_全量.json").write_text(
@@ -231,9 +290,11 @@ def main():
     for it in all_chapters:
         idx.append(f"| {it['chapter']} | {it['title']} | {it['groups']} | {it['lines']} | "
                    f"{it['named']} | [{it['file']}]({it['file']}) |")
-    idx += ["", "## 说明", "",
+        idx += ["", "## 说明", "",
             "- 每章一个 Markdown 文件；`主线剧情_全本.md` 是 50 章合并版，便于全文检索。",
             "- `主线剧情_全量.json` 含 zh-CN / en / ja 三语、`speaker` / `speaker_id` / `portrait` / `portrait_id`。",
+            "- CG 转场：`cg` 字段 / `🖼 CG` 标记只出现在**画面切换到新 CG 的那一行**；",
+            "  同一张 CG 持续显示的后续行不再重复标注，CG 离屏（切下一张或结束）即停止。",
             "- 说话人判定：对白表记录中 `localkey` 前出现两个角色 ID 才显示名字框，第二个为显示名；",
             "  只有一个 ID 的是画面立绘，属于旁白 / 无名字台词。",
             "- 数据来源全部为本机静态数据，未修改游戏、未读取进程内存。", "",

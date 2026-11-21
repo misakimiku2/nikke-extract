@@ -1,0 +1,2110 @@
+{
+ "absolute": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "absolute_en",
+    "movie_id": "absolute",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/absolute/absolute_en.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/absolute/absolute_en.srt"
+   },
+   {
+    "key": "absolute_ja",
+    "movie_id": "absolute",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/absolute/absolute_ja.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/absolute/absolute_ja.srt"
+   },
+   {
+    "key": "absolute_ko",
+    "movie_id": "absolute",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/absolute/absolute_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/absolute/absolute_ko.srt"
+   },
+   {
+    "key": "absolute_zh-TW",
+    "movie_id": "absolute",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/absolute/absolute_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/absolute/absolute_zh-TW.srt"
+   },
+   {
+    "key": "absolute_zh-CN",
+    "movie_id": "absolute",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/absolute/absolute_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/absolute/absolute_zh-CN.srt"
+   },
+   {
+    "key": "absolute_de",
+    "movie_id": "absolute",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/absolute/absolute_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/absolute/absolute_de.srt"
+   },
+   {
+    "key": "absolute_th",
+    "movie_id": "absolute",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/absolute/absolute_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/absolute/absolute_th.srt"
+   },
+   {
+    "key": "absolute_fr",
+    "movie_id": "absolute",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/absolute/absolute_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/absolute/absolute_fr.srt"
+   },
+   {
+    "key": "absolute_es",
+    "movie_id": "absolute",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/absolute/absolute_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/absolute/absolute_es.srt"
+   }
+  ]
+ },
+ "arkguardian": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "arkguardian_en",
+    "movie_id": "arkguardian",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/arkguardian/arkguardian_en.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/arkguardian/arkguardian_en.srt"
+   },
+   {
+    "key": "arkguardian_ja",
+    "movie_id": "arkguardian",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/arkguardian/arkguardian_ja.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/arkguardian/arkguardian_ja.srt"
+   },
+   {
+    "key": "arkguardian_ko",
+    "movie_id": "arkguardian",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/arkguardian/arkguardian_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/arkguardian/arkguardian_ko.srt"
+   },
+   {
+    "key": "arkguardian_zh-TW",
+    "movie_id": "arkguardian",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/arkguardian/arkguardian_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/arkguardian/arkguardian_zh-TW.srt"
+   },
+   {
+    "key": "arkguardian_zh-CN",
+    "movie_id": "arkguardian",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/arkguardian/arkguardian_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/arkguardian/arkguardian_zh-CN.srt"
+   },
+   {
+    "key": "arkguardian_de",
+    "movie_id": "arkguardian",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/arkguardian/arkguardian_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/arkguardian/arkguardian_de.srt"
+   },
+   {
+    "key": "arkguardian_th",
+    "movie_id": "arkguardian",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/arkguardian/arkguardian_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/arkguardian/arkguardian_th.srt"
+   },
+   {
+    "key": "arkguardian_fr",
+    "movie_id": "arkguardian",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/arkguardian/arkguardian_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/arkguardian/arkguardian_fr.srt"
+   },
+   {
+    "key": "arkguardian_es",
+    "movie_id": "arkguardian",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/arkguardian/arkguardian_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/arkguardian/arkguardian_es.srt"
+   }
+  ]
+ },
+ "arkranger": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "arkranger_en",
+    "movie_id": "arkranger",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/arkranger/arkranger_en.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/arkranger/arkranger_en.srt"
+   },
+   {
+    "key": "arkranger_ja",
+    "movie_id": "arkranger",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/arkranger/arkranger_ja.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/arkranger/arkranger_ja.srt"
+   },
+   {
+    "key": "arkranger_ko",
+    "movie_id": "arkranger",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/arkranger/arkranger_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/arkranger/arkranger_ko.srt"
+   },
+   {
+    "key": "arkranger_zh-TW",
+    "movie_id": "arkranger",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/arkranger/arkranger_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/arkranger/arkranger_zh-TW.srt"
+   },
+   {
+    "key": "arkranger_zh-CN",
+    "movie_id": "arkranger",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/arkranger/arkranger_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/arkranger/arkranger_zh-CN.srt"
+   },
+   {
+    "key": "arkranger_de",
+    "movie_id": "arkranger",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/arkranger/arkranger_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/arkranger/arkranger_de.srt"
+   },
+   {
+    "key": "arkranger_th",
+    "movie_id": "arkranger",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/arkranger/arkranger_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/arkranger/arkranger_th.srt"
+   },
+   {
+    "key": "arkranger_fr",
+    "movie_id": "arkranger",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/arkranger/arkranger_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/arkranger/arkranger_fr.srt"
+   },
+   {
+    "key": "arkranger_es",
+    "movie_id": "arkranger",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/arkranger/arkranger_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/arkranger/arkranger_es.srt"
+   }
+  ]
+ },
+ "beautyfullshot": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "beautyfullshot_en",
+    "movie_id": "beautyfullshot",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/beautyfullshot/beautyfullshot.mp4",
+    "srt": ""
+   },
+   {
+    "key": "beautyfullshot_ja",
+    "movie_id": "beautyfullshot",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/beautyfullshot/beautyfullshot.mp4",
+    "srt": ""
+   },
+   {
+    "key": "beautyfullshot_ko",
+    "movie_id": "beautyfullshot",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/beautyfullshot/beautyfullshot.mp4",
+    "srt": ""
+   },
+   {
+    "key": "beautyfullshot_zh-TW",
+    "movie_id": "beautyfullshot",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/beautyfullshot/beautyfullshot.mp4",
+    "srt": ""
+   },
+   {
+    "key": "beautyfullshot_zh-CN",
+    "movie_id": "beautyfullshot",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/beautyfullshot/beautyfullshot.mp4",
+    "srt": ""
+   },
+   {
+    "key": "beautyfullshot_de",
+    "movie_id": "beautyfullshot",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/beautyfullshot/beautyfullshot.mp4",
+    "srt": ""
+   },
+   {
+    "key": "beautyfullshot_th",
+    "movie_id": "beautyfullshot",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/beautyfullshot/beautyfullshot.mp4",
+    "srt": ""
+   },
+   {
+    "key": "beautyfullshot_fr",
+    "movie_id": "beautyfullshot",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/beautyfullshot/beautyfullshot.mp4",
+    "srt": ""
+   },
+   {
+    "key": "beautyfullshot_es",
+    "movie_id": "beautyfullshot",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/beautyfullshot/beautyfullshot.mp4",
+    "srt": ""
+   }
+  ]
+ },
+ "boomtheghost": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "boomtheghost_en",
+    "movie_id": "boomtheghost",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/boomtheghost/boomtheghost_en.mp4",
+    "srt": ""
+   },
+   {
+    "key": "boomtheghost_ja",
+    "movie_id": "boomtheghost",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/boomtheghost/boomtheghost_ja.mp4",
+    "srt": ""
+   },
+   {
+    "key": "boomtheghost_ko",
+    "movie_id": "boomtheghost",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/boomtheghost/boomtheghost_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "boomtheghost_zh-TW",
+    "movie_id": "boomtheghost",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/boomtheghost/boomtheghost_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "boomtheghost_zh-CN",
+    "movie_id": "boomtheghost",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/boomtheghost/boomtheghost_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "boomtheghost_de",
+    "movie_id": "boomtheghost",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/boomtheghost/boomtheghost_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "boomtheghost_th",
+    "movie_id": "boomtheghost",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/boomtheghost/boomtheghost_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "boomtheghost_fr",
+    "movie_id": "boomtheghost",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/boomtheghost/boomtheghost_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "boomtheghost_es",
+    "movie_id": "boomtheghost",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/boomtheghost/boomtheghost_ko.mp4",
+    "srt": ""
+   }
+  ]
+ },
+ "ch18_end": {
+  "说明": "第18章章末动画 · 目标",
+  "语言行": [
+   {
+    "key": "ch18_end_en",
+    "movie_id": "ch18_end",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/ch18_end_en.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch18_end_en.srt"
+   },
+   {
+    "key": "ch18_end_ja",
+    "movie_id": "ch18_end",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/ch18_end_ja.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch18_end_ja.srt"
+   },
+   {
+    "key": "ch18_end_ko",
+    "movie_id": "ch18_end",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/ch18_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch18_end_ko.srt"
+   },
+   {
+    "key": "ch18_end_zh-TW",
+    "movie_id": "ch18_end",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/ch18_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch18_end_zh-TW.srt"
+   },
+   {
+    "key": "ch18_end_zh-CN",
+    "movie_id": "ch18_end",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/ch18_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch18_end_zh-CN.srt"
+   },
+   {
+    "key": "ch18_end_de",
+    "movie_id": "ch18_end",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/ch18_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch18_end_de.srt"
+   },
+   {
+    "key": "ch18_end_th",
+    "movie_id": "ch18_end",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/ch18_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch18_end_th.srt"
+   },
+   {
+    "key": "ch18_end_fr",
+    "movie_id": "ch18_end",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/ch18_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch18_end_fr.srt"
+   },
+   {
+    "key": "ch18_end_es",
+    "movie_id": "ch18_end",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/ch18_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch18_end_es.srt"
+   }
+  ]
+ },
+ "ch22_end": {
+  "说明": "第22章章末动画 · 巨鲸",
+  "语言行": [
+   {
+    "key": "ch22_end_en",
+    "movie_id": "ch22_end",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/ch22_end_en.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch22_end_en.srt"
+   },
+   {
+    "key": "ch22_end_ja",
+    "movie_id": "ch22_end",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/ch22_end_ja.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch22_end_ja.srt"
+   },
+   {
+    "key": "ch22_end_ko",
+    "movie_id": "ch22_end",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/ch22_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch22_end_ko.srt"
+   },
+   {
+    "key": "ch22_end_zh-TW",
+    "movie_id": "ch22_end",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/ch22_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch22_end_zh-TW.srt"
+   },
+   {
+    "key": "ch22_end_zh-CN",
+    "movie_id": "ch22_end",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/ch22_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch22_end_zh-CN.srt"
+   },
+   {
+    "key": "ch22_end_de",
+    "movie_id": "ch22_end",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/ch22_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch22_end_de.srt"
+   },
+   {
+    "key": "ch22_end_th",
+    "movie_id": "ch22_end",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/ch22_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch22_end_th.srt"
+   },
+   {
+    "key": "ch22_end_fr",
+    "movie_id": "ch22_end",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/ch22_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch22_end_fr.srt"
+   },
+   {
+    "key": "ch22_end_es",
+    "movie_id": "ch22_end",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/ch22_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch22_end_es.srt"
+   }
+  ]
+ },
+ "ch34_end": {
+  "说明": "第34章章末动画 · 冲突",
+  "语言行": [
+   {
+    "key": "ch34_end_en",
+    "movie_id": "ch34_end",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/ch34_end/ch34_end_en.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch34_end/ch34_end_en.srt"
+   },
+   {
+    "key": "ch34_end_ja",
+    "movie_id": "ch34_end",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/ch34_end/ch34_end_ja.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch34_end/ch34_end_ja.srt"
+   },
+   {
+    "key": "ch34_end_ko",
+    "movie_id": "ch34_end",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/ch34_end/ch34_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch34_end/ch34_end_ko.srt"
+   },
+   {
+    "key": "ch34_end_zh-TW",
+    "movie_id": "ch34_end",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/ch34_end/ch34_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch34_end/ch34_end_zh-TW.srt"
+   },
+   {
+    "key": "ch34_end_zh-CN",
+    "movie_id": "ch34_end",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/ch34_end/ch34_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch34_end/ch34_end_zh-CN.srt"
+   },
+   {
+    "key": "ch34_end_de",
+    "movie_id": "ch34_end",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/ch34_end/ch34_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch34_end/ch34_end_de.srt"
+   },
+   {
+    "key": "ch34_end_th",
+    "movie_id": "ch34_end",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/ch34_end/ch34_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch34_end/ch34_end_th.srt"
+   },
+   {
+    "key": "ch34_end_fr",
+    "movie_id": "ch34_end",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/ch34_end/ch34_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch34_end/ch34_end_fr.srt"
+   },
+   {
+    "key": "ch34_end_es",
+    "movie_id": "ch34_end",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/ch34_end/ch34_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch34_end/ch34_end_es.srt"
+   }
+  ]
+ },
+ "ch42_end": {
+  "说明": "第42章章末动画 · 诞生",
+  "语言行": [
+   {
+    "key": "ch42_end_en",
+    "movie_id": "ch42_end",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/ch42_end/ch42_end_en.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch42_end/ch42_end_en.srt"
+   },
+   {
+    "key": "ch42_end_ja",
+    "movie_id": "ch42_end",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/ch42_end/ch42_end_ja.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch42_end/ch42_end_ja.srt"
+   },
+   {
+    "key": "ch42_end_ko",
+    "movie_id": "ch42_end",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/ch42_end/ch42_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch42_end/ch42_end_ko.srt"
+   },
+   {
+    "key": "ch42_end_zh-TW",
+    "movie_id": "ch42_end",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/ch42_end/ch42_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch42_end/ch42_end_zh-TW.srt"
+   },
+   {
+    "key": "ch42_end_zh-CN",
+    "movie_id": "ch42_end",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/ch42_end/ch42_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch42_end/ch42_end_zh-CN.srt"
+   },
+   {
+    "key": "ch42_end_de",
+    "movie_id": "ch42_end",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/ch42_end/ch42_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch42_end/ch42_end_de.srt"
+   },
+   {
+    "key": "ch42_end_th",
+    "movie_id": "ch42_end",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/ch42_end/ch42_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch42_end/ch42_end_th.srt"
+   },
+   {
+    "key": "ch42_end_fr",
+    "movie_id": "ch42_end",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/ch42_end/ch42_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch42_end/ch42_end_fr.srt"
+   },
+   {
+    "key": "ch42_end_es",
+    "movie_id": "ch42_end",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/ch42_end/ch42_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch42_end/ch42_end_es.srt"
+   }
+  ]
+ },
+ "ch49_end": {
+  "说明": "第49章章末动画 · 重生",
+  "语言行": [
+   {
+    "key": "ch49_end_en",
+    "movie_id": "ch49_end",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/ch49_end/ch49_end_en.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch49_end/ch49_end_en.srt"
+   },
+   {
+    "key": "ch49_end_ja",
+    "movie_id": "ch49_end",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/ch49_end/ch49_end_ja.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch49_end/ch49_end_ja.srt"
+   },
+   {
+    "key": "ch49_end_ko",
+    "movie_id": "ch49_end",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/ch49_end/ch49_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch49_end/ch49_end_ko.srt"
+   },
+   {
+    "key": "ch49_end_zh-TW",
+    "movie_id": "ch49_end",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/ch49_end/ch49_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch49_end/ch49_end_zh-TW.srt"
+   },
+   {
+    "key": "ch49_end_zh-CN",
+    "movie_id": "ch49_end",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/ch49_end/ch49_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch49_end/ch49_end_zh-CN.srt"
+   },
+   {
+    "key": "ch49_end_de",
+    "movie_id": "ch49_end",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/ch49_end/ch49_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch49_end/ch49_end_de.srt"
+   },
+   {
+    "key": "ch49_end_th",
+    "movie_id": "ch49_end",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/ch49_end/ch49_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch49_end/ch49_end_th.srt"
+   },
+   {
+    "key": "ch49_end_fr",
+    "movie_id": "ch49_end",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/ch49_end/ch49_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch49_end/ch49_end_fr.srt"
+   },
+   {
+    "key": "ch49_end_es",
+    "movie_id": "ch49_end",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/ch49_end/ch49_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch49_end/ch49_end_es.srt"
+   }
+  ]
+ },
+ "coinrushshowdown": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "coinrushshowdown_en",
+    "movie_id": "coinrushshowdown",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/coinrushshowdown/coinrushshowdown_en.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/coinrushshowdown/coinrushshowdown_en.srt"
+   },
+   {
+    "key": "coinrushshowdown_ja",
+    "movie_id": "coinrushshowdown",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/coinrushshowdown/coinrushshowdown_ja.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/coinrushshowdown/coinrushshowdown_ja.srt"
+   },
+   {
+    "key": "coinrushshowdown_ko",
+    "movie_id": "coinrushshowdown",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/coinrushshowdown/coinrushshowdown_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/coinrushshowdown/coinrushshowdown_ko.srt"
+   },
+   {
+    "key": "coinrushshowdown_zh-TW",
+    "movie_id": "coinrushshowdown",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/coinrushshowdown/coinrushshowdown_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/coinrushshowdown/coinrushshowdown_zh-TW.srt"
+   },
+   {
+    "key": "coinrushshowdown_zh-CN",
+    "movie_id": "coinrushshowdown",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/coinrushshowdown/coinrushshowdown_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/coinrushshowdown/coinrushshowdown_zh-CN.srt"
+   },
+   {
+    "key": "coinrushshowdown_de",
+    "movie_id": "coinrushshowdown",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/coinrushshowdown/coinrushshowdown_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/coinrushshowdown/coinrushshowdown_de.srt"
+   },
+   {
+    "key": "coinrushshowdown_th",
+    "movie_id": "coinrushshowdown",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/coinrushshowdown/coinrushshowdown_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/coinrushshowdown/coinrushshowdown_th.srt"
+   },
+   {
+    "key": "coinrushshowdown_fr",
+    "movie_id": "coinrushshowdown",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/coinrushshowdown/coinrushshowdown_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/coinrushshowdown/coinrushshowdown_fr.srt"
+   },
+   {
+    "key": "coinrushshowdown_es",
+    "movie_id": "coinrushshowdown",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/coinrushshowdown/coinrushshowdown_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/coinrushshowdown/coinrushshowdown_es.srt"
+   }
+  ]
+ },
+ "footstepwalkrun": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "footstepwalkrun_en",
+    "movie_id": "footstepwalkrun",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/footstepwalkrun/footstepwalkrun_en.mp4",
+    "srt": ""
+   },
+   {
+    "key": "footstepwalkrun_ja",
+    "movie_id": "footstepwalkrun",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/footstepwalkrun/footstepwalkrun_ja.mp4",
+    "srt": ""
+   },
+   {
+    "key": "footstepwalkrun_ko",
+    "movie_id": "footstepwalkrun",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/footstepwalkrun/footstepwalkrun_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "footstepwalkrun_zh-TW",
+    "movie_id": "footstepwalkrun",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/footstepwalkrun/footstepwalkrun_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "footstepwalkrun_zh-CN",
+    "movie_id": "footstepwalkrun",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/footstepwalkrun/footstepwalkrun_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "footstepwalkrun_de",
+    "movie_id": "footstepwalkrun",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/footstepwalkrun/footstepwalkrun_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "footstepwalkrun_th",
+    "movie_id": "footstepwalkrun",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/footstepwalkrun/footstepwalkrun_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "footstepwalkrun_fr",
+    "movie_id": "footstepwalkrun",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/footstepwalkrun/footstepwalkrun_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "footstepwalkrun_es",
+    "movie_id": "footstepwalkrun",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/footstepwalkrun/footstepwalkrun_ko.mp4",
+    "srt": ""
+   }
+  ]
+ },
+ "goddessfall": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "goddessfall_en",
+    "movie_id": "goddessfall",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/goddessfall/goddessfall_en.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/goddessfall/goddessfall_en.srt"
+   },
+   {
+    "key": "goddessfall_ja",
+    "movie_id": "goddessfall",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/goddessfall/goddessfall_ja.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/goddessfall/goddessfall_ja.srt"
+   },
+   {
+    "key": "goddessfall_ko",
+    "movie_id": "goddessfall",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/goddessfall/goddessfall_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/goddessfall/goddessfall_ko.srt"
+   },
+   {
+    "key": "goddessfall_zh-TW",
+    "movie_id": "goddessfall",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/goddessfall/goddessfall_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/goddessfall/goddessfall_zh-TW.srt"
+   },
+   {
+    "key": "goddessfall_zh-CN",
+    "movie_id": "goddessfall",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/goddessfall/goddessfall_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/goddessfall/goddessfall_zh-CN.srt"
+   },
+   {
+    "key": "goddessfall_de",
+    "movie_id": "goddessfall",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/goddessfall/goddessfall_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/goddessfall/goddessfall_de.srt"
+   },
+   {
+    "key": "goddessfall_th",
+    "movie_id": "goddessfall",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/goddessfall/goddessfall_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/goddessfall/goddessfall_th.srt"
+   },
+   {
+    "key": "goddessfall_fr",
+    "movie_id": "goddessfall",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/goddessfall/goddessfall_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/goddessfall/goddessfall_fr.srt"
+   },
+   {
+    "key": "goddessfall_es",
+    "movie_id": "goddessfall",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/goddessfall/goddessfall_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/goddessfall/goddessfall_es.srt"
+   }
+  ]
+ },
+ "icedragonsaga": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "icedragonsaga_en",
+    "movie_id": "icedragonsaga",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/icedragonsaga/icedragonsaga_en.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/icedragonsaga/icedragonsaga_en.srt"
+   },
+   {
+    "key": "icedragonsaga_ja",
+    "movie_id": "icedragonsaga",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/icedragonsaga/icedragonsaga_ja.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/icedragonsaga/icedragonsaga_ja.srt"
+   },
+   {
+    "key": "icedragonsaga_ko",
+    "movie_id": "icedragonsaga",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/icedragonsaga/icedragonsaga_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/icedragonsaga/icedragonsaga_ko.srt"
+   },
+   {
+    "key": "icedragonsaga_zh-TW",
+    "movie_id": "icedragonsaga",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/icedragonsaga/icedragonsaga_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/icedragonsaga/icedragonsaga_zh-TW.srt"
+   },
+   {
+    "key": "icedragonsaga_zh-CN",
+    "movie_id": "icedragonsaga",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/icedragonsaga/icedragonsaga_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/icedragonsaga/icedragonsaga_zh-CN.srt"
+   },
+   {
+    "key": "icedragonsaga_de",
+    "movie_id": "icedragonsaga",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/icedragonsaga/icedragonsaga_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/icedragonsaga/icedragonsaga_de.srt"
+   },
+   {
+    "key": "icedragonsaga_th",
+    "movie_id": "icedragonsaga",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/icedragonsaga/icedragonsaga_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/icedragonsaga/icedragonsaga_th.srt"
+   },
+   {
+    "key": "icedragonsaga_fr",
+    "movie_id": "icedragonsaga",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/icedragonsaga/icedragonsaga_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/icedragonsaga/icedragonsaga_fr.srt"
+   },
+   {
+    "key": "icedragonsaga_es",
+    "movie_id": "icedragonsaga",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/icedragonsaga/icedragonsaga_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/icedragonsaga/icedragonsaga_es.srt"
+   }
+  ]
+ },
+ "lastkingdom": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "lastkingdom_en",
+    "movie_id": "lastkingdom",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/lastkingdom/lastkingdom_en.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/lastkingdom/lastkingdom_en.srt"
+   },
+   {
+    "key": "lastkingdom_ja",
+    "movie_id": "lastkingdom",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/lastkingdom/lastkingdom_ja.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/lastkingdom/lastkingdom_ja.srt"
+   },
+   {
+    "key": "lastkingdom_ko",
+    "movie_id": "lastkingdom",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/lastkingdom/lastkingdom_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/lastkingdom/lastkingdom_ko.srt"
+   },
+   {
+    "key": "lastkingdom_zh-TW",
+    "movie_id": "lastkingdom",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/lastkingdom/lastkingdom_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/lastkingdom/lastkingdom_zh-TW.srt"
+   },
+   {
+    "key": "lastkingdom_zh-CN",
+    "movie_id": "lastkingdom",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/lastkingdom/lastkingdom_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/lastkingdom/lastkingdom_zh-CN.srt"
+   },
+   {
+    "key": "lastkingdom_de",
+    "movie_id": "lastkingdom",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/lastkingdom/lastkingdom_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/lastkingdom/lastkingdom_de.srt"
+   },
+   {
+    "key": "lastkingdom_th",
+    "movie_id": "lastkingdom",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/lastkingdom/lastkingdom_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/lastkingdom/lastkingdom_th.srt"
+   },
+   {
+    "key": "lastkingdom_fr",
+    "movie_id": "lastkingdom",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/lastkingdom/lastkingdom_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/lastkingdom/lastkingdom_fr.srt"
+   },
+   {
+    "key": "lastkingdom_es",
+    "movie_id": "lastkingdom",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/lastkingdom/lastkingdom_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/lastkingdom/lastkingdom_es.srt"
+   }
+  ]
+ },
+ "marian": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "marian_en",
+    "movie_id": "marian",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/marian/marian_en.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/marian/marian_en.srt"
+   },
+   {
+    "key": "marian_ja",
+    "movie_id": "marian",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/marian/marian_ja.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/marian/marian_ja.srt"
+   },
+   {
+    "key": "marian_ko",
+    "movie_id": "marian",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/marian/marian_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/marian/marian_ko.srt"
+   },
+   {
+    "key": "marian_zh-TW",
+    "movie_id": "marian",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/marian/marian_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/marian/marian_zh-TW.srt"
+   },
+   {
+    "key": "marian_zh-CN",
+    "movie_id": "marian",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/marian/marian_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/marian/marian_zh-CN.srt"
+   },
+   {
+    "key": "marian_de",
+    "movie_id": "marian",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/marian/marian_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/marian/marian_de.srt"
+   },
+   {
+    "key": "marian_th",
+    "movie_id": "marian",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/marian/marian_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/marian/marian_th.srt"
+   },
+   {
+    "key": "marian_fr",
+    "movie_id": "marian",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/marian/marian_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/marian/marian_fr.srt"
+   },
+   {
+    "key": "marian_es",
+    "movie_id": "marian",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/marian/marian_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/marian/marian_es.srt"
+   }
+  ]
+ },
+ "miraclesnow": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "miraclesnow_en",
+    "movie_id": "miraclesnow",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/miraclesnow.mp4",
+    "srt": ""
+   },
+   {
+    "key": "miraclesnow_ja",
+    "movie_id": "miraclesnow",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/miraclesnow.mp4",
+    "srt": ""
+   },
+   {
+    "key": "miraclesnow_ko",
+    "movie_id": "miraclesnow",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/miraclesnow.mp4",
+    "srt": ""
+   },
+   {
+    "key": "miraclesnow_zh-TW",
+    "movie_id": "miraclesnow",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/miraclesnow.mp4",
+    "srt": ""
+   },
+   {
+    "key": "miraclesnow_zh-CN",
+    "movie_id": "miraclesnow",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/miraclesnow.mp4",
+    "srt": ""
+   },
+   {
+    "key": "miraclesnow_de",
+    "movie_id": "miraclesnow",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/miraclesnow.mp4",
+    "srt": ""
+   },
+   {
+    "key": "miraclesnow_th",
+    "movie_id": "miraclesnow",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/miraclesnow.mp4",
+    "srt": ""
+   },
+   {
+    "key": "miraclesnow_fr",
+    "movie_id": "miraclesnow",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/miraclesnow.mp4",
+    "srt": ""
+   },
+   {
+    "key": "miraclesnow_es",
+    "movie_id": "miraclesnow",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/miraclesnow.mp4",
+    "srt": ""
+   }
+  ]
+ },
+ "neverland": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "neverland_en",
+    "movie_id": "neverland",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/neverland_en.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/neverland_en.srt"
+   },
+   {
+    "key": "neverland_ja",
+    "movie_id": "neverland",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/neverland_ja.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/neverland_ja.srt"
+   },
+   {
+    "key": "neverland_ko",
+    "movie_id": "neverland",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/neverland_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/neverland_ko.srt"
+   },
+   {
+    "key": "neverland_zh-TW",
+    "movie_id": "neverland",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/neverland_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/neverland_zh-TW.srt"
+   },
+   {
+    "key": "neverland_zh-CN",
+    "movie_id": "neverland",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/neverland_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/neverland_zh-CN.srt"
+   },
+   {
+    "key": "neverland_de",
+    "movie_id": "neverland",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/neverland_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/neverland_de.srt"
+   },
+   {
+    "key": "neverland_th",
+    "movie_id": "neverland",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/neverland_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/neverland_th.srt"
+   },
+   {
+    "key": "neverland_fr",
+    "movie_id": "neverland",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/neverland_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/neverland_fr.srt"
+   },
+   {
+    "key": "neverland_es",
+    "movie_id": "neverland",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/neverland_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/neverland_es.srt"
+   }
+  ]
+ },
+ "newyearnewsword": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "newyearnewsword_en",
+    "movie_id": "newyearnewsword",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/newyearnewsword.mp4",
+    "srt": ""
+   },
+   {
+    "key": "newyearnewsword_ja",
+    "movie_id": "newyearnewsword",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/newyearnewsword.mp4",
+    "srt": ""
+   },
+   {
+    "key": "newyearnewsword_ko",
+    "movie_id": "newyearnewsword",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/newyearnewsword.mp4",
+    "srt": ""
+   },
+   {
+    "key": "newyearnewsword_zh-TW",
+    "movie_id": "newyearnewsword",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/newyearnewsword.mp4",
+    "srt": ""
+   },
+   {
+    "key": "newyearnewsword_zh-CN",
+    "movie_id": "newyearnewsword",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/newyearnewsword.mp4",
+    "srt": ""
+   },
+   {
+    "key": "newyearnewsword_de",
+    "movie_id": "newyearnewsword",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/newyearnewsword.mp4",
+    "srt": ""
+   },
+   {
+    "key": "newyearnewsword_th",
+    "movie_id": "newyearnewsword",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/newyearnewsword.mp4",
+    "srt": ""
+   },
+   {
+    "key": "newyearnewsword_fr",
+    "movie_id": "newyearnewsword",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/newyearnewsword.mp4",
+    "srt": ""
+   },
+   {
+    "key": "newyearnewsword_es",
+    "movie_id": "newyearnewsword",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/newyearnewsword.mp4",
+    "srt": ""
+   }
+  ]
+ },
+ "oldtales": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "oldtales_en",
+    "movie_id": "oldtales",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/oldtales/oldtales_en.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/oldtales/oldtales_en.srt"
+   },
+   {
+    "key": "oldtales_ja",
+    "movie_id": "oldtales",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/oldtales/oldtales_ja.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/oldtales/oldtales_ja.srt"
+   },
+   {
+    "key": "oldtales_ko",
+    "movie_id": "oldtales",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/oldtales/oldtales_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/oldtales/oldtales_ko.srt"
+   },
+   {
+    "key": "oldtales_zh-TW",
+    "movie_id": "oldtales",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/oldtales/oldtales_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/oldtales/oldtales_zh-TW.srt"
+   },
+   {
+    "key": "oldtales_zh-CN",
+    "movie_id": "oldtales",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/oldtales/oldtales_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/oldtales/oldtales_zh-CN.srt"
+   },
+   {
+    "key": "oldtales_de",
+    "movie_id": "oldtales",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/oldtales/oldtales_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/oldtales/oldtales_de.srt"
+   },
+   {
+    "key": "oldtales_th",
+    "movie_id": "oldtales",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/oldtales/oldtales_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/oldtales/oldtales_th.srt"
+   },
+   {
+    "key": "oldtales_fr",
+    "movie_id": "oldtales",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/oldtales/oldtales_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/oldtales/oldtales_fr.srt"
+   },
+   {
+    "key": "oldtales_es",
+    "movie_id": "oldtales",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/oldtales/oldtales_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/oldtales/oldtales_es.srt"
+   }
+  ]
+ },
+ "opening_pv01": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "opening_pv01_en",
+    "movie_id": "opening_pv01",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/ch01_end_en.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch01_end_en.srt"
+   },
+   {
+    "key": "opening_pv01_ja",
+    "movie_id": "opening_pv01",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/ch01_end_ja.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch01_end_ja.srt"
+   },
+   {
+    "key": "opening_pv01_ko",
+    "movie_id": "opening_pv01",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/ch01_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch01_end_ko.srt"
+   },
+   {
+    "key": "opening_pv01_zh-TW",
+    "movie_id": "opening_pv01",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/ch01_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch01_end_zh-TW.srt"
+   },
+   {
+    "key": "opening_pv01_zh-CN",
+    "movie_id": "opening_pv01",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/ch01_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch01_end_zh-CN.srt"
+   },
+   {
+    "key": "opening_pv01_de",
+    "movie_id": "opening_pv01",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/ch01_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch01_end_de.srt"
+   },
+   {
+    "key": "opening_pv01_th",
+    "movie_id": "opening_pv01",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/ch01_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch01_end_th.srt"
+   },
+   {
+    "key": "opening_pv01_fr",
+    "movie_id": "opening_pv01",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/ch01_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch01_end_fr.srt"
+   },
+   {
+    "key": "opening_pv01_es",
+    "movie_id": "opening_pv01",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/ch01_end_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/ch01_end_es.srt"
+   }
+  ]
+ },
+ "perfectmaid": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "perfectmaid_en",
+    "movie_id": "perfectmaid",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/perfectmaid_en.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/perfectmaid_en.srt"
+   },
+   {
+    "key": "perfectmaid_ja",
+    "movie_id": "perfectmaid",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/perfectmaid_ja.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/perfectmaid_ja.srt"
+   },
+   {
+    "key": "perfectmaid_ko",
+    "movie_id": "perfectmaid",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/perfectmaid_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/perfectmaid_ko.srt"
+   },
+   {
+    "key": "perfectmaid_zh-TW",
+    "movie_id": "perfectmaid",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/perfectmaid_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/perfectmaid_zh-TW.srt"
+   },
+   {
+    "key": "perfectmaid_zh-CN",
+    "movie_id": "perfectmaid",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/perfectmaid_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/perfectmaid_zh-CN.srt"
+   },
+   {
+    "key": "perfectmaid_de",
+    "movie_id": "perfectmaid",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/perfectmaid_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/perfectmaid_de.srt"
+   },
+   {
+    "key": "perfectmaid_th",
+    "movie_id": "perfectmaid",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/perfectmaid_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/perfectmaid_th.srt"
+   },
+   {
+    "key": "perfectmaid_fr",
+    "movie_id": "perfectmaid",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/perfectmaid_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/perfectmaid_fr.srt"
+   },
+   {
+    "key": "perfectmaid_es",
+    "movie_id": "perfectmaid",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/perfectmaid_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/perfectmaid_es.srt"
+   }
+  ]
+ },
+ "redash": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "redash_en",
+    "movie_id": "redash",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/redash_en.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/redash_en.srt"
+   },
+   {
+    "key": "redash_ja",
+    "movie_id": "redash",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/redash_ja.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/redash_ja.srt"
+   },
+   {
+    "key": "redash_ko",
+    "movie_id": "redash",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/redash_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/redash_ko.srt"
+   },
+   {
+    "key": "redash_zh-TW",
+    "movie_id": "redash",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/redash_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/redash_zh-TW.srt"
+   },
+   {
+    "key": "redash_zh-CN",
+    "movie_id": "redash",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/redash_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/redash_zh-CN.srt"
+   },
+   {
+    "key": "redash_de",
+    "movie_id": "redash",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/redash_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/redash_de.srt"
+   },
+   {
+    "key": "redash_th",
+    "movie_id": "redash",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/redash_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/redash_th.srt"
+   },
+   {
+    "key": "redash_fr",
+    "movie_id": "redash",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/redash_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/redash_fr.srt"
+   },
+   {
+    "key": "redash_es",
+    "movie_id": "redash",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/redash_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/redash_es.srt"
+   }
+  ]
+ },
+ "secondquest": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "secondquest_en",
+    "movie_id": "secondquest",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/secondquest/secondquest_mini.mp4",
+    "srt": ""
+   },
+   {
+    "key": "secondquest_ja",
+    "movie_id": "secondquest",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/secondquest/secondquest_mini.mp4",
+    "srt": ""
+   },
+   {
+    "key": "secondquest_ko",
+    "movie_id": "secondquest",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/secondquest/secondquest_mini.mp4",
+    "srt": ""
+   },
+   {
+    "key": "secondquest_zh-TW",
+    "movie_id": "secondquest",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/secondquest/secondquest_mini.mp4",
+    "srt": ""
+   },
+   {
+    "key": "secondquest_zh-CN",
+    "movie_id": "secondquest",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/secondquest/secondquest_mini.mp4",
+    "srt": ""
+   },
+   {
+    "key": "secondquest_de",
+    "movie_id": "secondquest",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/secondquest/secondquest_mini.mp4",
+    "srt": ""
+   },
+   {
+    "key": "secondquest_th",
+    "movie_id": "secondquest",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/secondquest/secondquest_mini.mp4",
+    "srt": ""
+   },
+   {
+    "key": "secondquest_fr",
+    "movie_id": "secondquest",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/secondquest/secondquest_mini.mp4",
+    "srt": ""
+   },
+   {
+    "key": "secondquest_es",
+    "movie_id": "secondquest",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/secondquest/secondquest_mini.mp4",
+    "srt": ""
+   }
+  ]
+ },
+ "staranis1": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "staranis1_en",
+    "movie_id": "staranis1",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/staranis1/staranis1.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/staranis1/staranis1_en.srt"
+   },
+   {
+    "key": "staranis1_ja",
+    "movie_id": "staranis1",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/staranis1/staranis1.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/staranis1/staranis1_ja.srt"
+   },
+   {
+    "key": "staranis1_ko",
+    "movie_id": "staranis1",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/staranis1/staranis1.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/staranis1/staranis1_ko.srt"
+   },
+   {
+    "key": "staranis1_zh-TW",
+    "movie_id": "staranis1",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/staranis1/staranis1.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/staranis1/staranis1_zh-TW.srt"
+   },
+   {
+    "key": "staranis1_zh-CN",
+    "movie_id": "staranis1",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/staranis1/staranis1.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/staranis1/staranis1_zh-CN.srt"
+   },
+   {
+    "key": "staranis1_de",
+    "movie_id": "staranis1",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/staranis1/staranis1.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/staranis1/staranis1_de.srt"
+   },
+   {
+    "key": "staranis1_th",
+    "movie_id": "staranis1",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/staranis1/staranis1.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/staranis1/staranis1_th.srt"
+   },
+   {
+    "key": "staranis1_fr",
+    "movie_id": "staranis1",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/staranis1/staranis1.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/staranis1/staranis1_fr.srt"
+   },
+   {
+    "key": "staranis1_es",
+    "movie_id": "staranis1",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/staranis1/staranis1.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/staranis1/staranis1_es.srt"
+   }
+  ]
+ },
+ "staranis2": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "staranis2_en",
+    "movie_id": "staranis2",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/staranis2/staranis2.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/staranis2/staranis2_en.srt"
+   },
+   {
+    "key": "staranis2_ja",
+    "movie_id": "staranis2",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/staranis2/staranis2.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/staranis2/staranis2_ja.srt"
+   },
+   {
+    "key": "staranis2_ko",
+    "movie_id": "staranis2",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/staranis2/staranis2.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/staranis2/staranis2_ko.srt"
+   },
+   {
+    "key": "staranis2_zh-TW",
+    "movie_id": "staranis2",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/staranis2/staranis2.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/staranis2/staranis2_zh-TW.srt"
+   },
+   {
+    "key": "staranis2_zh-CN",
+    "movie_id": "staranis2",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/staranis2/staranis2.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/staranis2/staranis2_zh-CN.srt"
+   },
+   {
+    "key": "staranis2_de",
+    "movie_id": "staranis2",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/staranis2/staranis2.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/staranis2/staranis2_de.srt"
+   },
+   {
+    "key": "staranis2_th",
+    "movie_id": "staranis2",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/staranis2/staranis2.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/staranis2/staranis2_th.srt"
+   },
+   {
+    "key": "staranis2_fr",
+    "movie_id": "staranis2",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/staranis2/staranis2.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/staranis2/staranis2_fr.srt"
+   },
+   {
+    "key": "staranis2_es",
+    "movie_id": "staranis2",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/staranis2/staranis2.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/staranis2/staranis2_es.srt"
+   }
+  ]
+ },
+ "summer_2023": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "summer_2023_en",
+    "movie_id": "summer_2023",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/summer_2023.mp4",
+    "srt": ""
+   },
+   {
+    "key": "summer_2023_ja",
+    "movie_id": "summer_2023",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/summer_2023.mp4",
+    "srt": ""
+   },
+   {
+    "key": "summer_2023_ko",
+    "movie_id": "summer_2023",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/summer_2023.mp4",
+    "srt": ""
+   },
+   {
+    "key": "summer_2023_zh-TW",
+    "movie_id": "summer_2023",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/summer_2023.mp4",
+    "srt": ""
+   },
+   {
+    "key": "summer_2023_zh-CN",
+    "movie_id": "summer_2023",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/summer_2023.mp4",
+    "srt": ""
+   },
+   {
+    "key": "summer_2023_de",
+    "movie_id": "summer_2023",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/summer_2023.mp4",
+    "srt": ""
+   },
+   {
+    "key": "summer_2023_th",
+    "movie_id": "summer_2023",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/summer_2023.mp4",
+    "srt": ""
+   },
+   {
+    "key": "summer_2023_fr",
+    "movie_id": "summer_2023",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/summer_2023.mp4",
+    "srt": ""
+   },
+   {
+    "key": "summer_2023_es",
+    "movie_id": "summer_2023",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/summer_2023.mp4",
+    "srt": ""
+   }
+  ]
+ },
+ "terminusticket": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "terminusticket_en",
+    "movie_id": "terminusticket",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/terminusticket/terminusticket_en.mp4",
+    "srt": ""
+   },
+   {
+    "key": "terminusticket_ja",
+    "movie_id": "terminusticket",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/terminusticket/terminusticket_ja.mp4",
+    "srt": ""
+   },
+   {
+    "key": "terminusticket_ko",
+    "movie_id": "terminusticket",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/terminusticket/terminusticket_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "terminusticket_zh-TW",
+    "movie_id": "terminusticket",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/terminusticket/terminusticket_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "terminusticket_zh-CN",
+    "movie_id": "terminusticket",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/terminusticket/terminusticket_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "terminusticket_de",
+    "movie_id": "terminusticket",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/terminusticket/terminusticket_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "terminusticket_th",
+    "movie_id": "terminusticket",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/terminusticket/terminusticket_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "terminusticket_fr",
+    "movie_id": "terminusticket",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/terminusticket/terminusticket_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "terminusticket_es",
+    "movie_id": "terminusticket",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/terminusticket/terminusticket_ko.mp4",
+    "srt": ""
+   }
+  ]
+ },
+ "twoxtwolove": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "twoxtwolove_en",
+    "movie_id": "twoxtwolove",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/twoxtwolove/twoxtwolove_en.mp4",
+    "srt": ""
+   },
+   {
+    "key": "twoxtwolove_ja",
+    "movie_id": "twoxtwolove",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/twoxtwolove/twoxtwolove_ja.mp4",
+    "srt": ""
+   },
+   {
+    "key": "twoxtwolove_ko",
+    "movie_id": "twoxtwolove",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/twoxtwolove/twoxtwolove_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "twoxtwolove_zh-TW",
+    "movie_id": "twoxtwolove",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/twoxtwolove/twoxtwolove_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "twoxtwolove_zh-CN",
+    "movie_id": "twoxtwolove",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/twoxtwolove/twoxtwolove_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "twoxtwolove_de",
+    "movie_id": "twoxtwolove",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/twoxtwolove/twoxtwolove_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "twoxtwolove_th",
+    "movie_id": "twoxtwolove",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/twoxtwolove/twoxtwolove_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "twoxtwolove_fr",
+    "movie_id": "twoxtwolove",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/twoxtwolove/twoxtwolove_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "twoxtwolove_es",
+    "movie_id": "twoxtwolove",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/twoxtwolove/twoxtwolove_ko.mp4",
+    "srt": ""
+   }
+  ]
+ },
+ "unbreakablesphere": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "unbreakablesphere_en",
+    "movie_id": "unbreakablesphere",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/unbreakablesphere/unbreakablesphere_en.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/unbreakablesphere/unbreakablesphere_en.srt"
+   },
+   {
+    "key": "unbreakablesphere_ja",
+    "movie_id": "unbreakablesphere",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/unbreakablesphere/unbreakablesphere_ja.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/unbreakablesphere/unbreakablesphere_ja.srt"
+   },
+   {
+    "key": "unbreakablesphere_ko",
+    "movie_id": "unbreakablesphere",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/unbreakablesphere/unbreakablesphere_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/unbreakablesphere/unbreakablesphere_ko.srt"
+   },
+   {
+    "key": "unbreakablesphere_zh-TW",
+    "movie_id": "unbreakablesphere",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/unbreakablesphere/unbreakablesphere_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/unbreakablesphere/unbreakablesphere_zh-TW.srt"
+   },
+   {
+    "key": "unbreakablesphere_zh-CN",
+    "movie_id": "unbreakablesphere",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/unbreakablesphere/unbreakablesphere_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/unbreakablesphere/unbreakablesphere_zh-CN.srt"
+   },
+   {
+    "key": "unbreakablesphere_de",
+    "movie_id": "unbreakablesphere",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/unbreakablesphere/unbreakablesphere_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/unbreakablesphere/unbreakablesphere_de.srt"
+   },
+   {
+    "key": "unbreakablesphere_th",
+    "movie_id": "unbreakablesphere",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/unbreakablesphere/unbreakablesphere_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/unbreakablesphere/unbreakablesphere_th.srt"
+   },
+   {
+    "key": "unbreakablesphere_fr",
+    "movie_id": "unbreakablesphere",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/unbreakablesphere/unbreakablesphere_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/unbreakablesphere/unbreakablesphere_fr.srt"
+   },
+   {
+    "key": "unbreakablesphere_es",
+    "movie_id": "unbreakablesphere",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/unbreakablesphere/unbreakablesphere_ko.mp4",
+    "srt": "https://cloud.nikke-kr.com/media/unbreakablesphere/unbreakablesphere_es.srt"
+   }
+  ]
+ },
+ "wavetoyou": {
+  "说明": "",
+  "语言行": [
+   {
+    "key": "wavetoyou_en",
+    "movie_id": "wavetoyou",
+    "语言": "en",
+    "mp4": "https://cloud.nikke-kr.com/media/wavetoyou/wavetoyou_en.mp4",
+    "srt": ""
+   },
+   {
+    "key": "wavetoyou_ja",
+    "movie_id": "wavetoyou",
+    "语言": "ja",
+    "mp4": "https://cloud.nikke-kr.com/media/wavetoyou/wavetoyou_ja.mp4",
+    "srt": ""
+   },
+   {
+    "key": "wavetoyou_ko",
+    "movie_id": "wavetoyou",
+    "语言": "ko",
+    "mp4": "https://cloud.nikke-kr.com/media/wavetoyou/wavetoyou_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "wavetoyou_zh-TW",
+    "movie_id": "wavetoyou",
+    "语言": "zh-TW",
+    "mp4": "https://cloud.nikke-kr.com/media/wavetoyou/wavetoyou_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "wavetoyou_zh-CN",
+    "movie_id": "wavetoyou",
+    "语言": "zh-CN",
+    "mp4": "https://cloud.nikke-kr.com/media/wavetoyou/wavetoyou_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "wavetoyou_de",
+    "movie_id": "wavetoyou",
+    "语言": "de",
+    "mp4": "https://cloud.nikke-kr.com/media/wavetoyou/wavetoyou_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "wavetoyou_th",
+    "movie_id": "wavetoyou",
+    "语言": "th",
+    "mp4": "https://cloud.nikke-kr.com/media/wavetoyou/wavetoyou_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "wavetoyou_fr",
+    "movie_id": "wavetoyou",
+    "语言": "fr",
+    "mp4": "https://cloud.nikke-kr.com/media/wavetoyou/wavetoyou_ko.mp4",
+    "srt": ""
+   },
+   {
+    "key": "wavetoyou_es",
+    "movie_id": "wavetoyou",
+    "语言": "es",
+    "mp4": "https://cloud.nikke-kr.com/media/wavetoyou/wavetoyou_ko.mp4",
+    "srt": ""
+   }
+  ]
+ }
+}

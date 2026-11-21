@@ -1,0 +1,62 @@
+{
+ "ScenarioDialogTable": {
+  "groups_in_csv": 1218,
+  "mpk_files": 1239,
+  "groups_with_cg": 171,
+  "refs": 583,
+  "orphan_mpks": 21,
+  "orphan_with_cg": 0,
+  "cg_outside_segments": 0,
+  "files_with_orphan_cg": 0
+ },
+ "EventScenarioDialogTable": {
+  "groups_in_csv": 2565,
+  "mpk_files": 2594,
+  "groups_with_cg": 367,
+  "refs": 1083,
+  "orphan_mpks": 29,
+  "orphan_with_cg": 1,
+  "cg_outside_segments": 0,
+  "files_with_orphan_cg": 0
+ },
+ "AttractiveScenarioDialogTable": {
+  "groups_in_csv": 1114,
+  "mpk_files": 1115,
+  "groups_with_cg": 7,
+  "refs": 12,
+  "orphan_mpks": 1,
+  "orphan_with_cg": 0,
+  "cg_outside_segments": 0,
+  "files_with_orphan_cg": 0
+ },
+ "SideStoryScenarioDialogTable": {
+  "groups_in_csv": 96,
+  "mpk_files": 99,
+  "groups_with_cg": 33,
+  "refs": 92,
+  "orphan_mpks": 3,
+  "orphan_with_cg": 0,
+  "cg_outside_segments": 0,
+  "files_with_orphan_cg": 0
+ },
+ "SideStorySpotDialogTable": {
+  "groups_in_csv": 6,
+  "mpk_files": 6,
+  "groups_with_cg": 0,
+  "refs": 0,
+  "orphan_mpks": 0,
+  "orphan_with_cg": 0,
+  "cg_outside_segments": 0,
+  "files_with_orphan_cg": 0
+ },
+ "AttractiveCounselDialogTable": {
+  "groups_in_csv": 3400,
+  "mpk_files": 3420,
+  "groups_with_cg": 0,
+  "refs": 0,
+  "orphan_mpks": 20,
+  "orphan_with_cg": 0,
+  "cg_outside_segments": 0,
+  "files_with_orphan_cg": 0
+ }
+}
