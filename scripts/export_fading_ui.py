@@ -25,41 +25,37 @@ import UnityPy
 import zstandard as zstd
 import export_cg_v2 as v2
 
-BUNDLES = list(range(14098, 14113))   # eventui-marian_assets_adventure_*
+# 小游戏本体 UI：adventure_* 全套 + 结局/状态图标 + view-fadingaffection* 视图壳
+BUNDLES = (
+    [("core", i) for i in list(range(14098, 14113)) + [14117] +
+     list(range(14120, 14127)) + list(range(26802, 26814))] +
+    # dp 池的 icons-event-89_marian(hd)：教程插画与 icn_fadingaffection_* 图标
+    [("dp", 5050)]
+)
 OUT = pathlib.Path(r"E:\test\nikke-web\public\fading_ui")
 FORCE = "--force" in sys.argv
 
-# 只导出网页实际用到的纹理，避免把 30 MB 的特效图集也搬过去
-WANT = {
-    "marian_bg_texture", "marian_texture_paper", "marian_ptn_paper",
-    "marian_ptn_wood_01", "marian_ptn_wood_02",
-    "marian_main_back_bg_01", "marian_main_back_bg_02", "marian_main_back_bg_03",
-    "marian_main_back_bg_04", "marian_main_back_bg_05",
-    "marian_main_top_bg", "marian_main_middle_bg",
-    "marian_mask_scene", "marian_bg_tilte", "marian_deco_state_01",
-    "marian_deco_state_02", "marian_bg_state", "marian_bg_choice",
-    "marian_bg_choice_maria", "marian_bg_choice_hidden", "marian_txt_check",
-    "marian_txt_choice_hidden", "marian_icn_hint", "marian_txt_script",
-    "marian_txt_accessdenied", "marian_txt_denied", "marian_deco_01",
-    "marian_deco_02", "marian_deco_03", "marian_deco_04", "marian_deco_05",
-    "marian_deco_book", "marian_deco_book_marian", "marian_btn_bg",
-    "marian_map_bg_mono", "marian_routeselect_01", "marian_routeselect_02",
-    "marian_routeselect_03", "marian_bg_book", "marian_divider_01",
-    "marian_main_paper", "marian_icn_memory", "marian_icn_lock",
-    "marian_bg_check", "marian_icn_reddot",
-}
+# 不再做白名单筛选：上述 bundle 里的全部 Texture2D 都导出，保证「所有用到的图片」都在。
+# 排除的是明显属于其它活动的通用 atlas（名字里有别的活动 key），它们在游戏里不会
+# 被小游戏引用，且体积很大。
+EXCLUDE_NEEDLES = (
+    "2x2love", "arkguardian", "blankticket", "terminusticket",
+    "wavetoyou", "footstepwalkrun", "bow-wowparadise", "memoriesteller",
+)
 
 
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
-    cat = sqlite3.connect(v2.manifest_path("core"))
-    table = v2.cidx_map("core")
-    cdb = v2.ROOT / "core" / "chunk" / "store.cdb"
-    cdb_size = cdb.stat().st_size
     dec = zstd.ZstdDecompressor()
-
     saved = skipped = 0
-    for fid in BUNDLES:
+    # 按资源池缓存连接，避免每张 bundle 重开 catalog
+    pools = {}
+    for pool, fid in BUNDLES:
+        if pool not in pools:
+            cat = sqlite3.connect(v2.manifest_path(pool))
+            cdb = v2.ROOT / pool / "chunk" / "store.cdb"
+            pools[pool] = (cat, v2.cidx_map(pool), cdb, cdb.stat().st_size)
+        cat, table, cdb, cdb_size = pools[pool]
         bundle, _parts, missing = v2.rebuild(cat, table, cdb, dec, fid, cdb_size)
         if missing or not bundle or not bundle.startswith(b"UnityFS"):
             continue
@@ -72,9 +68,12 @@ def main() -> None:
                 name = str(getattr(tex, "m_Name", "") or "")
             except Exception:
                 continue
-            if name not in WANT:
+            low = name.lower()
+            if any(x in low for x in EXCLUDE_NEEDLES):
                 continue
-            dest = OUT / (name + ".png")
+            # 贴图名可能含 '|' 等 Windows 非法字符，统一清洗
+            safe = re.sub(r"[^\w.-]+", "_", name) or f"tex_{o.path_id}"
+            dest = OUT / (safe + ".png")
             if dest.exists() and not FORCE:
                 skipped += 1
                 continue
@@ -84,7 +83,8 @@ def main() -> None:
                 print("saved", dest.name)
             except Exception as e:
                 print("skip", name, e)
-    cat.close()
+    for cat, _, _, _ in pools.values():
+        cat.close()
     print(f"done: saved={saved} skipped={skipped} -> {OUT}")
 
 
