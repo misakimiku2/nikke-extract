@@ -67,6 +67,7 @@ python scripts/export_rest.py                 # 活动/支线/个人/咨询
 python scripts/export_char_stats.py           # 角色基础属性（HP/ATK/DEF）→ staging/
 python scripts/export_story_v2.py             # 最新活动（玛丽安）文本
 python scripts/export_fadingaffection.py      # FIRST AFFECTION 小游戏分支图（EventTextAdvPlus 静态表）→ staging/ + nikke-web/public/data/
+python scripts/export_fading_ui.py            # 小游戏原版 UI：Texture2D → nikke-web/public/fading_ui/*.png；Sprite 九宫格 border → nikke-web/build/fading_ui_sprites.json
 python scripts/export_movies.py               # ScenarioMovieTable → CG索引/剧情动画清单.csv
 python scripts/export_bg.py                   # 纯剧情背景（scenariobackground 非 eventscene）→ CG/06_剧情背景/
 python scripts/export_bg_map.py               # 动态CG↔背景对照表 → CG索引/动态CG背景对照.csv
