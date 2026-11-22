@@ -189,7 +189,8 @@ def parse_pages(loc: dict[str, str]) -> dict[int, dict]:
     return pages
 
 
-def parse_choices(loc: dict[str, str], pages: dict[int, dict]) -> dict[int, dict]:
+def parse_choices(loc: dict[str, str], pages: dict[int, dict],
+                  memory_by_page: dict[int, dict]) -> dict[int, dict]:
     raw = (STATIC / "EventTextAdvPlusSelectOptionTable.mpk").read_bytes()
     spans = record_spans(raw)
     out: dict[int, dict] = {}
@@ -205,6 +206,25 @@ def parse_choices(loc: dict[str, str], pages: dict[int, dict]) -> dict[int, dict
         src = vals[0] if vals else None
         cand = [v for v in vals[1:] if v in pages]
         dest = cand[-1] if cand else None
+        # 带 hint 的选项各自有独立解锁条件：
+        #   紧跟选项 key 之后的 i32 是类型(1=记忆页 / 2=状态 / 3=结局页)，
+        #   再后一个 i32 是条件值（页号或结局页号）。
+        hint_req = None
+        if hint:
+            key_end = next((n for _, s, n in strs if s == key), None)
+            if key_end is not None and key_end + 8 <= end:
+                ctype = struct.unpack_from("<i", raw, key_end)[0]
+                cval = struct.unpack_from("<i", raw, key_end + 4)[0]
+                if ctype == 1 and cval in memory_by_page:
+                    mem = memory_by_page[cval]
+                    hint_req = {"kind": "memory", "page": cval,
+                                "memory": f"{mem['route']}-{mem['index']}", "name": mem["name"]}
+                elif ctype == 3 and 6000 <= cval <= 9999:
+                    tkey = pages[cval]["key"] if cval in pages else ""
+                    hint_req = {"kind": "ending", "page": cval,
+                                "name": text_of(loc, tkey + "_title")}
+                elif ctype == 2:
+                    hint_req = {"kind": "state", "page": cval, "name": "侵蚀/粮食状态"}
         ctext = text_of(loc, key)
         cost = {"hp": 0, "food": 0, "erosion": 0}
         for words, delta in COST_RULES:
@@ -219,6 +239,7 @@ def parse_choices(loc: dict[str, str], pages: dict[int, dict]) -> dict[int, dict
             text=ctext,
             hintKey=hint,
             hint=text_of(loc, hint),
+            hintReq=hint_req,
             sfx=sfx,
             dest=dest,
             candidates=cand,
@@ -346,9 +367,9 @@ def cg_hashes() -> dict[str, str]:
 def main() -> None:
     loc = locale_map()
     pages = parse_pages(loc)
-    choices = parse_choices(loc, pages)
     routes = parse_routes(loc, pages)
     memories, memory_by_page = parse_memories(loc)
+    choices = parse_choices(loc, pages, memory_by_page)
     first = parse_first(loc, pages, memory_by_page)
     hashes = cg_hashes()
     bgs = bg_hashes()
