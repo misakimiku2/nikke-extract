@@ -227,7 +227,8 @@ def parse_choices(loc: dict[str, str], pages: dict[int, dict]) -> dict[int, dict
     return out
 
 
-def parse_first(loc: dict[str, str], pages: dict[int, dict]) -> list[dict]:
+def parse_first(loc: dict[str, str], pages: dict[int, dict],
+                memory_by_page: dict[int, dict]) -> list[dict]:
     raw = (STATIC / "EventTextAdvPlusFirstSelectTable.mpk").read_bytes()
     spans = record_spans(raw)
     out = []
@@ -236,17 +237,32 @@ def parse_first(loc: dict[str, str], pages: dict[int, dict]) -> list[dict]:
         key = next((s for _, s, _ in strs if STR_RE.match(s)), None)
         if not key:
             continue
-        # 首选项：目标页紧跟在字符串字段之后（后面的 1114 等是其它字段）
+        # 目标页紧跟在字符串之后；其后的最后一个 4 位数是解锁条件：
+        #   1114/1214 -> saveitem_1-14/2-14（记忆「小径」），7205 -> 结局页
         after = max((n for _, _, n in strs), default=st)
-        cand = [v for _, v in ints_in(raw, after, end, 1000, 6999) if v in pages]
+        tail = [v for _, v in ints_in(raw, after, end, 1000, 9999)]
+        cand = [v for v in tail if v in pages]
+        dest = cand[0] if cand else None
+        unlock = None
+        for v in reversed(tail):
+            if v == dest:
+                continue
+            if v in memory_by_page:
+                mem = memory_by_page[v]
+                unlock = {"kind": "memory", "page": v,
+                          "memory": f"{mem['route']}-{mem['index']}", "name": mem["name"]}
+            elif 6000 <= v <= 9999:
+                unlock = {"kind": "ending", "page": v,
+                          "name": text_of(loc, pages[v]["key"] + "_title")}
+            break
         m = re.match(r"fadingaffection_(\d+)_\d+$", key.split(":", 1)[-1])
         out.append(dict(page=int(m.group(1)) if m else rid, key=key,
                         text=text_of(loc, key),
-                        dest=cand[0] if cand else None, candidates=cand))
+                        dest=dest, candidates=cand, unlock=unlock))
     return out
 
 
-def parse_routes(loc: dict[str, str]) -> list[dict]:
+def parse_routes(loc: dict[str, str], pages: dict[int, dict]) -> list[dict]:
     raw = (STATIC / "EventTextAdvPlusRouteTable.mpk").read_bytes()
     spans = record_spans(raw)
     out = []
@@ -259,8 +275,17 @@ def parse_routes(loc: dict[str, str]) -> list[dict]:
         intro = next((s for s in ss if "intro" in s), None)
         date = next((s for s in ss if re.match(r"\d{4}-", s)), None)
         m = re.search(r"fadingaffection_route(\d+)_name$", name or "")
+        rno = int(m.group(1)) if m else None
+        # 路线解锁：原作要求先看完前一条记录的结局。TrueEnd 是该记录的收束：
+        # 路线2 需 8101「命运共同体」，路线3 需 8201「相守的梦」
+        req = None
+        if rno in (2, 3):
+            rp = 8101 if rno == 2 else 8201
+            req = {"kind": "ending", "page": rp,
+                   "name": text_of(loc, pages[rp]["key"] + "_title") if rp in pages else ""}
         out.append(dict(
-            no=int(m.group(1)) if m else None,
+            no=rno,
+            unlockRequirement=req,
             name=text_of(loc, name),
             nameKey=name,
             desc=text_of(loc, desc),
@@ -273,11 +298,16 @@ def parse_routes(loc: dict[str, str]) -> list[dict]:
     return out
 
 
-def parse_memories(loc: dict[str, str]) -> list[dict]:
-    """saveitem = 死亡后留下的「已储存的记忆」，45 条，按路线分组。"""
+def parse_memories(loc: dict[str, str]) -> tuple[list[dict], dict[int, dict]]:
+    """saveitem = 死亡后留下的「已储存的记忆」，40 条，按路线分组。
+
+    同时返回 page -> memory 映射：LootItemTable 的记录 id 就是授予该记忆的页面
+    （例如 1114 -> 1-14「小径」，正是「湖」地点的解锁条件）。
+    """
     raw = (STATIC / "EventTextAdvPlusLootItemTable.mpk").read_bytes()
     spans = record_spans(raw)
-    out = []
+    out: list[dict] = []
+    by_page: dict[int, dict] = {}
     for st, end, rid, _ in spans:
         strs = strings_in(raw, st, end)
         ss = [s for _, s, _ in strs]
@@ -287,12 +317,14 @@ def parse_memories(loc: dict[str, str]) -> list[dict]:
         g = re.search(r"saveitem_(\d+)_(\d+)_name$", m)
         desc = next((s for s in ss if "_description" in s), None)
         inven = next((s for s in ss if "_inven_02" in s), None)
-        out.append(dict(
+        item = dict(
             route=int(g.group(1)), index=int(g.group(2)),
-            name=text_of(loc, m), desc=text_of(loc, desc),
+            page=rid, name=text_of(loc, m), desc=text_of(loc, desc),
             short=text_of(loc, inven),
-        ))
-    return out
+        )
+        out.append(item)
+        by_page[rid] = item
+    return out, by_page
 
 
 def bg_hashes() -> dict[str, str]:
@@ -315,9 +347,9 @@ def main() -> None:
     loc = locale_map()
     pages = parse_pages(loc)
     choices = parse_choices(loc, pages)
-    first = parse_first(loc, pages)
-    routes = parse_routes(loc)
-    memories = parse_memories(loc)
+    routes = parse_routes(loc, pages)
+    memories, memory_by_page = parse_memories(loc)
+    first = parse_first(loc, pages, memory_by_page)
     hashes = cg_hashes()
     bgs = bg_hashes()
 
@@ -338,6 +370,7 @@ def main() -> None:
         status={"init": STATUS_INIT, "max": STATUS_MAX},
         backgrounds=bgs,
         memories=memories,
+        memoryByPage={str(k): v for k, v in sorted(memory_by_page.items())},
         routes=routes,
         pages={str(k): v for k, v in sorted(pages.items())},
         choices={str(k): v for k, v in sorted(choices.items())},
