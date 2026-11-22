@@ -66,6 +66,7 @@ python scripts/export_mainstory.py            # 主线 50 章
 python scripts/export_rest.py                 # 活动/支线/个人/咨询
 python scripts/export_char_stats.py           # 角色基础属性（HP/ATK/DEF）→ staging/
 python scripts/export_story_v2.py             # 最新活动（玛丽安）文本
+python scripts/export_fadingaffection.py      # FIRST AFFECTION 小游戏分支图（EventTextAdvPlus 静态表）→ staging/ + nikke-web/public/data/
 python scripts/export_movies.py               # ScenarioMovieTable → CG索引/剧情动画清单.csv
 python scripts/export_bg.py                   # 纯剧情背景（scenariobackground 非 eventscene）→ CG/06_剧情背景/
 python scripts/export_bg_map.py               # 动态CG↔背景对照表 → CG索引/动态CG背景对照.csv
@@ -181,6 +182,47 @@ R/SR 的 16 级三围曲线一致，仅满值不同。珍藏品的百分比技�
 ```
 staging/favorite_stats.json   12 款珍藏品 × 16 级三围 + 名称/职业/图标 key
 ```
+
+## FIRST AFFECTION 小游戏（EventTextAdvPlus）2026-11-22 逆向
+
+`event_firstaffection`（FADING AFFECTION）的小游戏本体**不在** `EventScenarioDialog` 里，
+而在 `EventTextAdvPlus*.mpk` 八张静态表中。内部路线 3 条：玛丽亚 / 玛丽安 / 7号；
+265 个页面、172 个选项、35 个结局（61xx=死亡、62xx、63xx、71xx/72xx=隐藏、8xxx/9xxx=TRUE）。
+
+MPK 记录布局（逆向自字节，通用解析器见 `export_fadingaffection.py`）：
+
+| 部分 | 布局 |
+|---|---|
+| 文件头 | `u32 记录数` |
+| 记录头 | `u8 flag` + `i32 id` + `i32 页号/版本`（因表而异）+ `i32 表常量 83501`（该活动专有） |
+| 字段 | 紧密排列：`i32 >= 0` 为整数；`i32 < 0` 为字符串 tag，紧跟 `u32 长度 + UTF-8` |
+
+关键 tag：`-37` 选项文本、`-42` 选项提示、`-34` 页面正文、`-32/-41` 页面 CG、
+`-26/-25` BGM、`-20` 日期、`-41/-48/-45` 路线名/介绍。跳转页号以**左移 1~2 字节**
+的形式存放（如 `0x17d50000 = 6101<<16`），所以按「每个字节偏移」扫 i32 才能稳定还原。
+
+页面 CG 按结局类型分 tag：`-32` 普通 / `-41` DeathEnd / `-46` CorruptionEnd /
+`-42` HiddenEnd / `-40` TrueEnd（只取 `-32` 会丢掉大部分结局 CG）。
+
+`EventTextAdvPlusLootItemTable.mpk`（flag=0x08，另需单独识别）里的 `saveitem` 就是
+死亡后留下的「已储存的记忆」——40 条，名字/描述取自 Locale_Event，与结局按
+`61xx -> 记忆 1-xx`、`62xx -> 记忆 2-xx` 对应；选项的 `_hint` 文本正是这些记忆的提示。
+
+状态槽（体力/粮食/侵蚀）初值与上限来自 Manager 表（体力/粮食各 10，侵蚀 0）。
+**注意**：选项的状态消耗目前是按选项文本关键词推导的（吃/跑/躲/黑暗等），
+属于还原度近似，不是从静态表直接逆向出的数值；界面会明示每次消耗，
+并在状态不足时禁用选项。小游戏没有专用背景表，按地点选用 `CG/06_剧情背景` 里
+已有的场景板（旧市区=DestroyedStreet、湖=Lake、新市区=City_d）。
+
+输出（`python scripts/export_fadingaffection.py`）：
+
+```
+staging/fadingaffection_minigame.json           完整分支图（含 memories / status / backgrounds）
+E:/test/nikke-web/public/data/fadingaffection.json   网站消费的紧凑副本
+```
+
+网页端已接入 `/game/fadingaffection`：三条路线、状态槽、选项消耗与禁用、
+死亡后解锁记忆/提示、结局图鉴、记忆档案、本地进度。
 
 ## CG 命名约定
 
