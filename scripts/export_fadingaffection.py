@@ -188,7 +188,10 @@ def parse_pages(loc: dict[str, str], loot_ids: set[int]) -> dict[int, dict]:
         if grant not in loot_ids:
             grant = 0
         cg = next((s for tag in CG_TAGS for s in by_tag.get(tag, []) if s.startswith("EventScene_")), None)
-        bgm = next((s for s in by_tag.get(-26, []) + by_tag.get(-25, []) if s.startswith("event_bgm_")), None)
+        # 每页只有一条 BGM，但它挂的 tag 从 -21 到 -34 都出现过（只认 -26/-25 会漏掉
+        # 120 页里的 44 页），所以先按常用 tag 找，再退回按值前缀扫全部字符串字段
+        bgm = next((s for tag in (-26, -25) for s in by_tag.get(tag, []) if s.startswith("event_bgm_")), None) \
+            or next((s for vs in by_tag.values() for s in vs if s.startswith("event_bgm_")), None)
         pages[page_id] = dict(
             id=page_id,
             key=key,
