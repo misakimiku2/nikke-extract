@@ -10,7 +10,7 @@
   staging/fadingaffection_minigame.json   完整分支图（路线 / 页面 / 选项 / 结局）
   E:/test/nikke-web/public/data/fadingaffection.json   网站直接消费的副本
 
-MPK 记录布局（逆向 2026-11-22，见 probe 脚本）：
+MPK 记录布局（逆向 2026-11-22，字段区定位 2026-11-23）：
   u32 记录数；每条记录：
     u8  flag   (0x0a 选项 / 0x15 页面 / 0x0f 路线 / 0x1c ...)
     i32 id
@@ -23,7 +23,28 @@ MPK 记录布局（逆向 2026-11-22，见 probe 脚本）：
                 -32 页面 CG 名 / -26,-25 页面 BGM /
                 -41 结局 CG / -21..-13 SFX / -20 日期 /
                 -48 路线描述 / -45 路线介绍 / -20 路线起始页 / -39 结局提示
-  页面跳转 ID 以左移 1~2 字节的形式存放；逐字节扫描 i32 即可稳定还原。
+
+解锁条件是定长字段，不需要靠字节扫描猜：
+  选项：-37 选项文本 key 字符串之后（4 字节对齐）依次是
+          i32 condType  0 无条件 / 1 需要记忆 / 2 需要状态 / 3 需要结局
+          i32 condValue 记忆 id（LootItemTable 记录 id）或结局页号
+        172 条选项里 38 条带条件，其中只有 25 条带 hint —— 只看 hint 会漏 13 条。
+  页面：-34 正文 key 字符串之后第 9 字节是
+          u8  kind      0 普通页 / 1 授予记忆的节点 / 2 结局页
+          i32 (+8)      本页授予的记忆 id（0 = 不授予）
+        45 条记忆正好被 46 个页面授予（6203 与 6205 都给 1203）。
+        记忆 id != 授予页号：例如 1-14「小径」(1114) 由页面 1142 授予。
+  地点选择：记录末尾同样是记忆 id / 结局页号（1114「小径」、1214、结局 7205）。
+
+状态：Manager 表 83501 记录里每条状态是「i32 a | i32 b | 名称串 | 图标串」，
+      体力 10/10、粮食 1/1、侵蚀 100/50 —— 粮食上限只有 1 份，是随身物品不是消耗条。
+      整个表族（Manager/Route/EventPage/SelectOption/FirstSelect/LootItem/
+      ProgressReward/SpecialIntro）里没有任何状态增减量：把 8 张表的所有 4 字节窗口
+      都扫过，[-9,-1] 且后面不是字符串 tag 的字段命中数为 0。
+      所以状态只是剧情门槛/演出内容，不导出 per-option cost。
+      侵蚀度按路线启用（routes[].erosion）：只有路线 2 存在「选项 -> 侵蚀结局(7xxx)」
+      的跳转；路线 1 的 7101 由页面 1209 自动推进触发。页面所属路线取 st+9 字段。
+  跳转页号仍以左移 1~2 字节的形式存放，页面/选项的 dest 靠逐字节扫描 i32 还原。
 """
 from __future__ import annotations
 
@@ -54,20 +75,14 @@ CG_TAGS = (-32, -41, -46, -42, -40)
 BG_NAMES = ["DestroyedStreet", "City_d", "Backstreet", "Lake", "Sunset",
             "RuinIndoor", "ShoppingStreet_d", "CityForest_01", "SnowTown_d"]
 
-# 状态初值（来自 EventTextAdvPlusManagerTable：体力/粮食各 10，侵蚀 0）
-STATUS_INIT = {"hp": 10, "food": 10, "erosion": 0}
-STATUS_MAX = {"hp": 10, "food": 10, "erosion": 10}
-
-# 选项对状态的影响：按选项文本关键词推导，UI 会明示消耗，避免"凭空扣数值"
-COST_RULES = [
-    (("分给", "喂", "分享粮食"), {"food": -2, "hp": 0, "erosion": -1}),
-    (("吃", "进食", "吃掉", "取出粮食"), {"food": 2, "hp": 1, "erosion": 0}),
-    (("进入", "走进", "进去", "仓库", "黑暗"), {"food": 0, "hp": 0, "erosion": 2}),
-    (("扎营", "休息", "躲", "藏", "等待"), {"food": -1, "hp": 2, "erosion": -1}),
-    (("前进", "继续", "跑", "冲", "交战", "开枪", "朝", "追"), {"food": -1, "hp": -2, "erosion": 1}),
-    (("观察", "查看", "寻找", "确认", "戒备", "调查"), {"food": 0, "hp": 0, "erosion": -1}),
-]
+# 状态定义来自 EventTextAdvPlusManagerTable 记录 83501（见 parse_manager）：
+# 每条状态是「i32 a | i32 b | 名称串 | 图标串」，实测 hp 10/10、food 1/1、erosion 100/50。
+# 名称串的 tag 即每条状态的分隔标记。
+STATUS_TAGS = {"hp": -44, "food": -46, "erosion": -49}
 STR_RE = re.compile(r"^Locale_Event:fadingaffection_")
+
+# 记忆条目分三类，解锁条件里引用的是 LootItem 记录 id（不是页号）
+LOOT_KINDS = {"saveitem": "save", "deleteditem": "deleted", "fragmenteditem": "fragment"}
 
 
 # ---------- generic MPK record reader ----------
@@ -148,7 +163,11 @@ def text_of(loc: dict[str, str], key: str | None) -> str:
 
 
 # ---------- table parsers ----------
-def parse_pages(loc: dict[str, str]) -> dict[int, dict]:
+def field_at(raw: bytes, pos: int) -> int:
+    return struct.unpack_from("<i", raw, pos)[0] if pos + 4 <= len(raw) else 0
+
+
+def parse_pages(loc: dict[str, str], loot_ids: set[int]) -> dict[int, dict]:
     raw = (STATIC / "EventTextAdvPlusEventPageTable.mpk").read_bytes()
     spans = record_spans(raw)
     pages: dict[int, dict] = {}
@@ -161,14 +180,23 @@ def parse_pages(loc: dict[str, str]) -> dict[int, dict]:
         if not key:
             continue
         page_id = rid
+        # 头之后第一个字段（st+9）是路线号 11/12/13 —— 结局页也带，比 id 前缀可靠
+        rtag = field_at(raw, st + 9)
+        key_end = next(n for tag, s, n in strs if tag == -34 and s == key)
+        # 正文 key 字符串之后固定 +9 是「抵达本页授予的记忆 id」（0 = 不给）
+        grant = field_at(raw, key_end + 9)
+        if grant not in loot_ids:
+            grant = 0
         cg = next((s for tag in CG_TAGS for s in by_tag.get(tag, []) if s.startswith("EventScene_")), None)
         bgm = next((s for s in by_tag.get(-26, []) + by_tag.get(-25, []) if s.startswith("event_bgm_")), None)
         pages[page_id] = dict(
             id=page_id,
             key=key,
             text=text_of(loc, key),
+            route=rtag - 10 if rtag in (11, 12, 13) else None,
             cg=cg,
             bgm=bgm,
+            grant=grant or None,
             next=None,
             links=[],
             _vals=[v for _, v in ints_in(raw, st, end, 1000, 9999)],
@@ -189,8 +217,65 @@ def parse_pages(loc: dict[str, str]) -> dict[int, dict]:
     return pages
 
 
+def parse_manager(loc: dict[str, str]) -> dict:
+    """EventTextAdvPlusManagerTable 记录 83501：三条状态的定义。
+
+    每条状态在表里是「i32 a | i32 b | 名称串 | 图标串」（数值紧挨名称串之前）：
+      体力 a=10 b=10 / 粮食 a=1 b=1 / 侵蚀 a=100 b=50
+    a 是上限，粮食上限只有 1 份 —— 与官方教程「选择特定选项时，可能需要粮食」一致，
+    它是随身物品而不是消耗条。侵蚀的 b=50 按 0..100 量尺上的触发阈值理解
+    （教程：「侵蚀数值达到一定程度时，记录对象将进入侵蚀状态」；表内无法与初值区分）。
+
+    重要：整个 EventTextAdvPlus 表族里找不到任何状态增减量（见 README/文档），
+    所以状态只作为剧情门槛导出，不导出 per-option cost。
+    """
+    raw = (STATIC / "EventTextAdvPlusManagerTable.mpk").read_bytes()
+    st, end, _, _ = record_spans(raw)[0]
+    strs = strings_in(raw, st, end)
+    items = []
+    for i, (tag, s, nxt) in enumerate(strs):
+        key = next((k for k, t in STATUS_TAGS.items() if t == tag), None)
+        if not key:
+            continue
+        data_start = nxt - len(s.encode("utf-8"))
+        items.append(dict(
+            key=key, name=text_of(loc, s), nameKey=s, icon=next(
+                (x for _, x, _ in strs[i + 1:i + 3] if x.startswith("icn_")), None),
+            max=field_at(raw, data_start - 16), second=field_at(raw, data_start - 12),
+        ))
+    maxes = {it["key"]: it["max"] for it in items}
+    init = {"hp": maxes.get("hp", 10), "food": maxes.get("food", 1), "erosion": 0}
+    return dict(items=items, init=init,
+                max={**{"hp": 10, "food": 1, "erosion": 100}, **maxes})
+
+
+def req_of(ctype: int, cval: int, loc: dict[str, str], pages: dict[int, dict],
+           memories: dict[int, dict]) -> dict | None:
+    """把选项的 (condType, condValue) 翻成可读的解锁条件。
+
+    condType 1 -> condValue 是记忆 id；2 -> 状态门槛（粮食）；3 -> 需先抵达的结局页。
+    """
+    if not ctype or not cval:
+        return None
+    if ctype == 1:
+        mem = memories.get(cval)
+        if not mem:
+            return {"kind": "memory", "id": cval, "page": None, "name": f"#{cval}"}
+        return {"kind": "memory", "id": cval, "page": mem["grantPage"],
+                "memory": f"{mem['route']}-{mem['index']}", "name": mem["name"],
+                "memoryKind": mem["kind"]}
+    if ctype == 3:
+        title = ""
+        if cval in pages:
+            title = text_of(loc, pages[cval]["key"] + "_title")
+        return {"kind": "ending", "id": cval, "page": cval, "name": title}
+    if ctype == 2:
+        return {"kind": "state", "id": cval, "page": None, "name": f"粮食 ≥ {cval}"}
+    return {"kind": "unknown", "id": cval, "page": None, "name": ""}
+
+
 def parse_choices(loc: dict[str, str], pages: dict[int, dict],
-                  memory_by_page: dict[int, dict]) -> dict[int, dict]:
+                  memories: dict[int, dict]) -> dict[int, dict]:
     raw = (STATIC / "EventTextAdvPlusSelectOptionTable.mpk").read_bytes()
     spans = record_spans(raw)
     out: dict[int, dict] = {}
@@ -206,32 +291,11 @@ def parse_choices(loc: dict[str, str], pages: dict[int, dict],
         src = vals[0] if vals else None
         cand = [v for v in vals[1:] if v in pages]
         dest = cand[-1] if cand else None
-        # 带 hint 的选项各自有独立解锁条件：
-        #   紧跟选项 key 之后的 i32 是类型(1=记忆页 / 2=状态 / 3=结局页)，
-        #   再后一个 i32 是条件值（页号或结局页号）。
-        hint_req = None
-        if hint:
-            key_end = next((n for _, s, n in strs if s == key), None)
-            if key_end is not None and key_end + 8 <= end:
-                ctype = struct.unpack_from("<i", raw, key_end)[0]
-                cval = struct.unpack_from("<i", raw, key_end + 4)[0]
-                if ctype == 1 and cval in memory_by_page:
-                    mem = memory_by_page[cval]
-                    hint_req = {"kind": "memory", "page": cval,
-                                "memory": f"{mem['route']}-{mem['index']}", "name": mem["name"]}
-                elif ctype == 3 and 6000 <= cval <= 9999:
-                    tkey = pages[cval]["key"] if cval in pages else ""
-                    hint_req = {"kind": "ending", "page": cval,
-                                "name": text_of(loc, tkey + "_title")}
-                elif ctype == 2:
-                    hint_req = {"kind": "state", "page": cval, "name": "侵蚀/粮食状态"}
+        # 每个选项都带 (condType, condValue)，位于选项 key 字符串之后、4 字节对齐。
+        # 只有 25 条带 hint，但带条件的有 38 条：条件不能只在有 hint 时才读。
+        key_end = next(n for tag, s, n in strs if tag == -37 and s == key)
+        req = req_of(field_at(raw, key_end), field_at(raw, key_end + 4), loc, pages, memories)
         ctext = text_of(loc, key)
-        cost = {"hp": 0, "food": 0, "erosion": 0}
-        for words, delta in COST_RULES:
-            if any(w in ctext for w in words):
-                for k, v in delta.items():
-                    cost[k] += v
-                break
         out[rid] = dict(
             id=rid,
             page=src,
@@ -239,17 +303,16 @@ def parse_choices(loc: dict[str, str], pages: dict[int, dict],
             text=ctext,
             hintKey=hint,
             hint=text_of(loc, hint),
-            hintReq=hint_req,
+            req=req,
             sfx=sfx,
             dest=dest,
             candidates=cand,
-            cost=cost,
         )
     return out
 
 
 def parse_first(loc: dict[str, str], pages: dict[int, dict],
-                memory_by_page: dict[int, dict]) -> list[dict]:
+                memories: dict[int, dict]) -> list[dict]:
     raw = (STATIC / "EventTextAdvPlusFirstSelectTable.mpk").read_bytes()
     spans = record_spans(raw)
     out = []
@@ -258,23 +321,27 @@ def parse_first(loc: dict[str, str], pages: dict[int, dict],
         key = next((s for _, s, _ in strs if STR_RE.match(s)), None)
         if not key:
             continue
-        # 目标页紧跟在字符串之后；其后的最后一个 4 位数是解锁条件：
-        #   1114/1214 -> saveitem_1-14/2-14（记忆「小径」），7205 -> 结局页
+        # 目标页紧跟在字符串之后；记录末尾的 4 位数是解锁条件：
+        #   1114/1214 是记忆 id（小径 / 一起走的路），7205 是结局页号。
         after = max((n for _, _, n in strs), default=st)
         tail = [v for _, v in ints_in(raw, after, end, 1000, 9999)]
         cand = [v for v in tail if v in pages]
         dest = cand[0] if cand else None
         unlock = None
         for v in reversed(tail):
+            # 记录里第一个 4 位数是目标页号，它同时也可能是某个记忆 id，必须跳过
             if v == dest:
                 continue
-            if v in memory_by_page:
-                mem = memory_by_page[v]
-                unlock = {"kind": "memory", "page": v,
-                          "memory": f"{mem['route']}-{mem['index']}", "name": mem["name"]}
-            elif 6000 <= v <= 9999:
-                unlock = {"kind": "ending", "page": v,
+            if v in memories:
+                mem = memories[v]
+                unlock = {"kind": "memory", "id": v, "page": mem["grantPage"],
+                          "memory": f"{mem['route']}-{mem['index']}", "name": mem["name"],
+                          "memoryKind": mem["kind"]}
+            elif 6000 <= v <= 9999 and v in pages:
+                unlock = {"kind": "ending", "id": v, "page": v,
                           "name": text_of(loc, pages[v]["key"] + "_title")}
+            else:
+                continue
             break
         m = re.match(r"fadingaffection_(\d+)_\d+$", key.split(":", 1)[-1])
         out.append(dict(page=int(m.group(1)) if m else rid, key=key,
@@ -302,7 +369,7 @@ def parse_routes(loc: dict[str, str], pages: dict[int, dict]) -> list[dict]:
         req = None
         if rno in (2, 3):
             rp = 8101 if rno == 2 else 8201
-            req = {"kind": "ending", "page": rp,
+            req = {"kind": "ending", "id": rp, "page": rp,
                    "name": text_of(loc, pages[rp]["key"] + "_title") if rp in pages else ""}
         out.append(dict(
             no=rno,
@@ -319,33 +386,36 @@ def parse_routes(loc: dict[str, str], pages: dict[int, dict]) -> list[dict]:
     return out
 
 
-def parse_memories(loc: dict[str, str]) -> tuple[list[dict], dict[int, dict]]:
-    """saveitem = 死亡后留下的「已储存的记忆」，40 条，按路线分组。
+def parse_memories(loc: dict[str, str], pages: dict[int, dict]) -> dict[int, dict]:
+    """LootItemTable 共 45 条记忆：已储存 / 已删除 / 仅剩一部分。
 
-    同时返回 page -> memory 映射：LootItemTable 的记录 id 就是授予该记忆的页面
-    （例如 1114 -> 1-14「小径」，正是「湖」地点的解锁条件）。
+    记录 id 就是记忆 id（选项解锁条件引用它），授予页从页面表的 +9 字段反查。
     """
     raw = (STATIC / "EventTextAdvPlusLootItemTable.mpk").read_bytes()
     spans = record_spans(raw)
-    out: list[dict] = []
-    by_page: dict[int, dict] = {}
+    granted: dict[int, list[int]] = {}
+    for pid, pg in pages.items():
+        if pg["grant"]:
+            granted.setdefault(pg["grant"], []).append(pid)
+    out: dict[int, dict] = {}
     for st, end, rid, _ in spans:
         strs = strings_in(raw, st, end)
         ss = [s for _, s, _ in strs]
-        m = next((s for s in ss if re.search(r"saveitem_\d+_\d+_name$", s)), None)
-        if not m:
+        name = next((s for s in ss if s.endswith("_name")), None)
+        if not name:
             continue
-        g = re.search(r"saveitem_(\d+)_(\d+)_name$", m)
-        desc = next((s for s in ss if "_description" in s), None)
-        inven = next((s for s in ss if "_inven_02" in s), None)
-        item = dict(
-            route=int(g.group(1)), index=int(g.group(2)),
-            page=rid, name=text_of(loc, m), desc=text_of(loc, desc),
-            short=text_of(loc, inven),
+        kind = next((k for kw, k in LOOT_KINDS.items() if kw in name), "save")
+        g = re.search(r"item_(\d+)_(\d+)_name$", name)
+        src = granted.get(rid, [])
+        out[rid] = dict(
+            id=rid, kind=kind,
+            route=int(g.group(1)) if g else 0, index=int(g.group(2)) if g else 0,
+            name=text_of(loc, name), desc=text_of(loc, next((s for s in ss if "_description" in s), None)),
+            short=text_of(loc, next((s for s in ss if "_inven_02" in s), None)),
+            grantPage=src[0] if src else None,
+            grantPages=src,
         )
-        out.append(item)
-        by_page[rid] = item
-    return out, by_page
+    return out
 
 
 def bg_hashes() -> dict[str, str]:
@@ -364,33 +434,47 @@ def cg_hashes() -> dict[str, str]:
     return {it["n"]: it["h"] for it in data.get("items", [])}
 
 
+def memory_ids() -> set[int]:
+    """LootItemTable 的记录 id 集合（= 记忆 id，解锁条件引用的就是这个）。"""
+    raw = (STATIC / "EventTextAdvPlusLootItemTable.mpk").read_bytes()
+    return {rid for st, end, rid, _ in record_spans(raw)
+            if any(s.endswith("_name") for _, s, _ in strings_in(raw, st, end))}
+
+
 def main() -> None:
     loc = locale_map()
-    pages = parse_pages(loc)
+    mem_ids = memory_ids()
+    pages = parse_pages(loc, mem_ids)
+    memories = parse_memories(loc, pages)
+    memory_by_page = {m["grantPage"]: m for m in memories.values() if m["grantPage"]}
     routes = parse_routes(loc, pages)
-    memories, memory_by_page = parse_memories(loc)
-    choices = parse_choices(loc, pages, memory_by_page)
-    first = parse_first(loc, pages, memory_by_page)
+    choices = parse_choices(loc, pages, memories)
+    first = parse_first(loc, pages, memories)
     hashes = cg_hashes()
     bgs = bg_hashes()
 
-    # route membership: walk from each route start via first/choices
-    by_page_first: dict[int, list[dict]] = {}
-    for c in first:
-        by_page_first.setdefault(c["page"], []).append(c)
-    by_page_choice: dict[int, list[dict]] = {}
-    for c in choices.values():
-        if c["page"]:
-            by_page_choice.setdefault(c["page"], []).append(c)
+    # 侵蚀度按路线启用：只有存在「选项 -> 侵蚀结局(7xxx)」跳转的路线才计数。
+    # 路线1 的 7101 由页面 1209 自动推进触发，不经过侵蚀数值。
+    # 页面所属路线取页面表 st+9 字段（11/12/13），不是靠 id 前缀猜的。
+    def origin_route(choice: dict) -> int | None:
+        pg = pages.get(choice["page"])
+        return pg["route"] if pg else None
 
+    erosion_routes = {r["no"] for r in routes if r["no"] and any(
+        c["dest"] and 7000 <= c["dest"] < 8000 and origin_route(c) == r["no"]
+        for c in choices.values())}
+    for r in routes:
+        r["erosion"] = r["no"] in erosion_routes
+
+    mgr = parse_manager(loc)
     data = dict(
-        version="qa-261122 (client rev 583593) / EventTextAdvPlus",
+        version="qa-261123 (client rev 583593) / EventTextAdvPlus",
         event="event_firstaffection",
         title="FADING AFFECTION",
         subtitle="渐逝的爱意",
-        status={"init": STATUS_INIT, "max": STATUS_MAX},
+        status=mgr,
         backgrounds=bgs,
-        memories=memories,
+        memories=[memories[k] for k in sorted(memories)],
         memoryByPage={str(k): v for k, v in sorted(memory_by_page.items())},
         routes=routes,
         pages={str(k): v for k, v in sorted(pages.items())},
@@ -406,9 +490,21 @@ def main() -> None:
     web.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
     endings = {k: v for k, v in pages.items() if v.get("ending")}
+    gated = [c for c in choices.values() if c["req"]]
+    broken = [c["id"] for c in gated if c["req"]["kind"] == "memory" and not c["req"]["page"]]
+    broken += [c["id"] for c in gated if c["req"]["kind"] == "ending" and c["req"]["page"] not in pages]
+    broken += [f["key"] for f in first if f["unlock"] and f["unlock"]["kind"] == "memory"
+               and not f["unlock"]["page"]]
     print(f"routes={len(routes)} pages={len(pages)} choices={len(choices)} "
           f"first={len(first)} endings={len(endings)} memories={len(memories)} "
           f"cgHashes={len(data['cgHashes'])} backgrounds={len(bgs)}")
+    print(f"gated options={len(gated)} (with hint {sum(1 for c in gated if c['hint'])}) "
+          f"gated locations={sum(1 for f in first if f['unlock'])} "
+          f"erosion routes={sorted(erosion_routes)} granted pages={len(memory_by_page)}")
+    print("manager status: " + " / ".join(
+        f"{it['name']} {it['max']},{it['second']} ({it['icon']})" for it in mgr["items"]))
+    if broken:
+        print(f"!! unresolved conditions: {broken}")
     print(f"wrote {out} ({out.stat().st_size/1024:.0f} KB)")
     print(f"wrote {web} ({web.stat().st_size/1024:.0f} KB)")
 
