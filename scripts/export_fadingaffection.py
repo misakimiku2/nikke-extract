@@ -38,12 +38,11 @@ MPK 记录布局（逆向 2026-11-22，字段区定位 2026-11-23）：
 
 状态：Manager 表 83501 记录里每条状态是「i32 a | i32 b | 名称串 | 图标串」，
       体力 10/10、粮食 1/1、侵蚀 100/50 —— 粮食上限只有 1 份，是随身物品不是消耗条。
-      整个表族（Manager/Route/EventPage/SelectOption/FirstSelect/LootItem/
-      ProgressReward/SpecialIntro）里没有任何状态增减量：把 8 张表的所有 4 字节窗口
-      都扫过，[-9,-1] 且后面不是字符串 tag 的字段命中数为 0。
-      所以状态只是剧情门槛/演出内容，不导出 per-option cost。
-      侵蚀度按路线启用（routes[].erosion）：只有路线 2 存在「选项 -> 侵蚀结局(7xxx)」
-      的跳转；路线 1 的 7101 由页面 1209 自动推进触发。页面所属路线取 st+9 字段。
+      选项状态增量是可选字段，不能按 4 字节对齐扫描：文本 key 后依次是
+      condType/condValue、可选 hint、一个标志字节、hp/food/erosion 三个 i32。
+      增量字段从 key 结尾后第 14 字节开始（有 hint 时从 hint 结尾后第 1 字节开始）。
+      侵蚀度按路线启用（routes[].erosion）：只有路线 2 的选项带侵蚀增量。
+      页面所属路线取 st+9 字段。
   跳转页号仍以左移 1~2 字节的形式存放，页面/选项的 dest 靠逐字节扫描 i32 还原。
 """
 from __future__ import annotations
@@ -229,8 +228,7 @@ def parse_manager(loc: dict[str, str]) -> dict:
     它是随身物品而不是消耗条。侵蚀的 b=50 按 0..100 量尺上的触发阈值理解
     （教程：「侵蚀数值达到一定程度时，记录对象将进入侵蚀状态」；表内无法与初值区分）。
 
-    重要：整个 EventTextAdvPlus 表族里找不到任何状态增减量（见 README/文档），
-    所以状态只作为剧情门槛导出，不导出 per-option cost。
+    逐选项的 hp / food / erosion 增量由 parse_choices 从可选字段导出。
     """
     raw = (STATIC / "EventTextAdvPlusManagerTable.mpk").read_bytes()
     st, end, _, _ = record_spans(raw)[0]
@@ -294,10 +292,16 @@ def parse_choices(loc: dict[str, str], pages: dict[int, dict],
         src = vals[0] if vals else None
         cand = [v for v in vals[1:] if v in pages]
         dest = cand[-1] if cand else None
-        # 每个选项都带 (condType, condValue)，位于选项 key 字符串之后、4 字节对齐。
-        # 只有 25 条带 hint，但带条件的有 38 条：条件不能只在有 hint 时才读。
+        # 每个选项都带 (condType, condValue)。只有 25 条带 hint，但带条件的有 38 条：
+        # 条件不能只在有 hint 时才读。hint 是可选字段，后续状态增量不按 4 字节对齐。
         key_end = next(n for tag, s, n in strs if tag == -37 and s == key)
         req = req_of(field_at(raw, key_end), field_at(raw, key_end + 4), loc, pages, memories)
+        pos = key_end + 9
+        if raw[key_end + 8]:
+            pos += 8 + field_at(raw, pos + 4)
+        else:
+            pos += 4
+        hp, food, erosion = struct.unpack_from("<iii", raw, pos + 1)
         ctext = text_of(loc, key)
         out[rid] = dict(
             id=rid,
@@ -310,6 +314,7 @@ def parse_choices(loc: dict[str, str], pages: dict[int, dict],
             sfx=sfx,
             dest=dest,
             candidates=cand,
+            statusChange=dict(hp=hp, food=food, erosion=erosion),
         )
     return out
 
