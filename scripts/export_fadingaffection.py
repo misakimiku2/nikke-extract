@@ -79,6 +79,8 @@ BG_NAMES = ["DestroyedStreet", "City_d", "Backstreet", "Lake", "Sunset",
 # 名称串的 tag 即每条状态的分隔标记。
 STATUS_TAGS = {"hp": -44, "food": -46, "erosion": -49}
 STR_RE = re.compile(r"^Locale_Event:fadingaffection_")
+LOCALE_COLS = ("zh-CN", "en", "ko", "ja")
+LocaleMap = dict[str, dict[str, str]]
 
 # 记忆条目分三类，解锁条件里引用的是 LootItem 记录 id（不是页号）
 LOOT_KINDS = {"saveitem": "save", "deleteditem": "deleted", "fragmenteditem": "fragment"}
@@ -141,24 +143,26 @@ def ints_in(raw: bytes, st: int, end: int, lo: int, hi: int) -> list[tuple[int, 
 
 
 # ---------- locale ----------
-def locale_map() -> dict[str, str]:
+def locale_map() -> LocaleMap:
     p = locale_db.find("Locale_Event")
     if p is None:
         raise SystemExit("Locale_Event not found in decrypted/")
     con = sqlite3.connect(f"file:{p}?mode=ro", uri=True)
     try:
-        rows = con.execute('SELECT "Key","zh-CN" FROM "Locale_Event"').fetchall()
+        cols = ",".join(f'"{c}"' for c in LOCALE_COLS)
+        rows = con.execute(f'SELECT "Key",{cols} FROM "Locale_Event"').fetchall()
     finally:
         con.close()
-    return {k: (v or "") for k, v in rows}
+    return {k: {lang: (row[i] or "").strip() for i, lang in enumerate(LOCALE_COLS)}
+            for k, *row in rows}
 
 
-def text_of(loc: dict[str, str], key: str | None) -> str:
+def text_of(loc: LocaleMap, key: str | None) -> str:
     if not key:
         return ""
     # 字符串字段里带 "Locale_Event:" 表名前缀，SQLite 里的 Key 没有
     plain = key.split(":", 1)[1] if ":" in key else key
-    return loc.get(plain, "").strip()
+    return loc.get(plain, {}).get("zh-CN", "")
 
 
 # ---------- table parsers ----------
@@ -166,7 +170,7 @@ def field_at(raw: bytes, pos: int) -> int:
     return struct.unpack_from("<i", raw, pos)[0] if pos + 4 <= len(raw) else 0
 
 
-def parse_pages(loc: dict[str, str], loot_ids: set[int]) -> dict[int, dict]:
+def parse_pages(loc: LocaleMap, loot_ids: set[int]) -> dict[int, dict]:
     raw = (STATIC / "EventTextAdvPlusEventPageTable.mpk").read_bytes()
     spans = record_spans(raw)
     pages: dict[int, dict] = {}
@@ -215,11 +219,12 @@ def parse_pages(loc: dict[str, str], loot_ids: set[int]) -> dict[int, dict]:
         title = text_of(loc, base + "_title")
         hint = text_of(loc, base + "_hint")
         if title or hint:
-            pg["ending"] = {"title": title, "hint": hint}
+            pg["ending"] = {"title": title, "hint": hint,
+                            "titleKey": pg["key"] + "_title", "hintKey": pg["key"] + "_hint"}
     return pages
 
 
-def parse_manager(loc: dict[str, str]) -> dict:
+def parse_manager(loc: LocaleMap) -> dict:
     """EventTextAdvPlusManagerTable 记录 83501：三条状态的定义。
 
     每条状态在表里是「i32 a | i32 b | 名称串 | 图标串」（数值紧挨名称串之前）：
@@ -250,7 +255,7 @@ def parse_manager(loc: dict[str, str]) -> dict:
                 max={**{"hp": 10, "food": 1, "erosion": 100}, **maxes})
 
 
-def req_of(ctype: int, cval: int, loc: dict[str, str], pages: dict[int, dict],
+def req_of(ctype: int, cval: int, loc: LocaleMap, pages: dict[int, dict],
            memories: dict[int, dict]) -> dict | None:
     """把选项的 (condType, condValue) 翻成可读的解锁条件。
 
@@ -264,18 +269,20 @@ def req_of(ctype: int, cval: int, loc: dict[str, str], pages: dict[int, dict],
             return {"kind": "memory", "id": cval, "page": None, "name": f"#{cval}"}
         return {"kind": "memory", "id": cval, "page": mem["grantPage"],
                 "memory": f"{mem['route']}-{mem['index']}", "name": mem["name"],
-                "memoryKind": mem["kind"]}
+                "nameKey": mem["nameKey"], "memoryKind": mem["kind"]}
     if ctype == 3:
         title = ""
+        title_key = None
         if cval in pages:
-            title = text_of(loc, pages[cval]["key"] + "_title")
-        return {"kind": "ending", "id": cval, "page": cval, "name": title}
+            title_key = pages[cval]["key"] + "_title"
+            title = text_of(loc, title_key)
+        return {"kind": "ending", "id": cval, "page": cval, "name": title, "nameKey": title_key}
     if ctype == 2:
         return {"kind": "state", "id": cval, "page": None, "name": f"粮食 ≥ {cval}"}
     return {"kind": "unknown", "id": cval, "page": None, "name": ""}
 
 
-def parse_choices(loc: dict[str, str], pages: dict[int, dict],
+def parse_choices(loc: LocaleMap, pages: dict[int, dict],
                   memories: dict[int, dict]) -> dict[int, dict]:
     raw = (STATIC / "EventTextAdvPlusSelectOptionTable.mpk").read_bytes()
     spans = record_spans(raw)
@@ -319,7 +326,7 @@ def parse_choices(loc: dict[str, str], pages: dict[int, dict],
     return out
 
 
-def parse_first(loc: dict[str, str], pages: dict[int, dict],
+def parse_first(loc: LocaleMap, pages: dict[int, dict],
                 memories: dict[int, dict]) -> list[dict]:
     raw = (STATIC / "EventTextAdvPlusFirstSelectTable.mpk").read_bytes()
     spans = record_spans(raw)
@@ -344,10 +351,11 @@ def parse_first(loc: dict[str, str], pages: dict[int, dict],
                 mem = memories[v]
                 unlock = {"kind": "memory", "id": v, "page": mem["grantPage"],
                           "memory": f"{mem['route']}-{mem['index']}", "name": mem["name"],
-                          "memoryKind": mem["kind"]}
+                          "nameKey": mem["nameKey"], "memoryKind": mem["kind"]}
             elif 6000 <= v <= 9999 and v in pages:
+                title_key = pages[v]["key"] + "_title"
                 unlock = {"kind": "ending", "id": v, "page": v,
-                          "name": text_of(loc, pages[v]["key"] + "_title")}
+                          "name": text_of(loc, title_key), "nameKey": title_key}
             else:
                 continue
             break
@@ -358,7 +366,7 @@ def parse_first(loc: dict[str, str], pages: dict[int, dict],
     return out
 
 
-def parse_routes(loc: dict[str, str], pages: dict[int, dict]) -> list[dict]:
+def parse_routes(loc: LocaleMap, pages: dict[int, dict]) -> list[dict]:
     raw = (STATIC / "EventTextAdvPlusRouteTable.mpk").read_bytes()
     spans = record_spans(raw)
     out = []
@@ -377,24 +385,27 @@ def parse_routes(loc: dict[str, str], pages: dict[int, dict]) -> list[dict]:
         req = None
         if rno in (2, 3):
             rp = 8101 if rno == 2 else 8201
+            title_key = pages[rp]["key"] + "_title" if rp in pages else None
             req = {"kind": "ending", "id": rp, "page": rp,
-                   "name": text_of(loc, pages[rp]["key"] + "_title") if rp in pages else ""}
+                   "name": text_of(loc, title_key), "nameKey": title_key}
         out.append(dict(
             no=rno,
             unlockRequirement=req,
             name=text_of(loc, name),
             nameKey=name,
             desc=text_of(loc, desc),
+            descKey=desc,
             startKey=start,
             start=int(start.rsplit("_", 1)[-1]) if start else None,
             intro=text_of(loc, intro),
+            introKey=intro,
             introText=text_of(loc, start),
             unlock=date,
         ))
     return out
 
 
-def parse_memories(loc: dict[str, str], pages: dict[int, dict]) -> dict[int, dict]:
+def parse_memories(loc: LocaleMap, pages: dict[int, dict]) -> dict[int, dict]:
     """LootItemTable 共 45 条记忆：已储存 / 已删除 / 仅剩一部分。
 
     记录 id 就是记忆 id（选项解锁条件引用它），授予页从页面表的 +9 字段反查。
@@ -414,12 +425,15 @@ def parse_memories(loc: dict[str, str], pages: dict[int, dict]) -> dict[int, dic
             continue
         kind = next((k for kw, k in LOOT_KINDS.items() if kw in name), "save")
         g = re.search(r"item_(\d+)_(\d+)_name$", name)
+        desc_key = next((s for s in ss if "_description" in s), None)
+        short_key = next((s for s in ss if "_inven_02" in s), None)
         src = granted.get(rid, [])
         out[rid] = dict(
             id=rid, kind=kind,
             route=int(g.group(1)) if g else 0, index=int(g.group(2)) if g else 0,
-            name=text_of(loc, name), desc=text_of(loc, next((s for s in ss if "_description" in s), None)),
-            short=text_of(loc, next((s for s in ss if "_inven_02" in s), None)),
+            name=text_of(loc, name), nameKey=name,
+            desc=text_of(loc, desc_key), descKey=desc_key,
+            short=text_of(loc, short_key), shortKey=short_key,
             grantPage=src[0] if src else None,
             grantPages=src,
         )
@@ -491,6 +505,24 @@ def main() -> None:
         cgHashes={k: v for k, v in hashes.items() if k.startswith("EventScene_FadingAffection")},
     )
 
+    used_keys: set[str] = set()
+
+    def collect_locale_keys(value) -> None:
+        if isinstance(value, str) and value.startswith("Locale_Event:"):
+            used_keys.add(value.split(":", 1)[1])
+        elif isinstance(value, dict):
+            for child in value.values():
+                collect_locale_keys(child)
+        elif isinstance(value, list):
+            for child in value:
+                collect_locale_keys(child)
+
+    collect_locale_keys(data)
+    data["locales"] = {
+        lang: {key: loc.get(key, {}).get(lang, "") for key in sorted(used_keys)}
+        for lang in LOCALE_COLS
+    }
+
     STAGING.mkdir(parents=True, exist_ok=True)
     out = STAGING / "fadingaffection_minigame.json"
     out.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -511,6 +543,9 @@ def main() -> None:
           f"erosion routes={sorted(erosion_routes)} granted pages={len(memory_by_page)}")
     print("manager status: " + " / ".join(
         f"{it['name']} {it['max']},{it['second']} ({it['icon']})" for it in mgr["items"]))
+    print("locale coverage: " + " / ".join(
+        f"{lang}={sum(bool(v) for v in data['locales'][lang].values())}/{len(used_keys)}"
+        for lang in LOCALE_COLS))
     if broken:
         print(f"!! unresolved conditions: {broken}")
     print(f"wrote {out} ({out.stat().st_size/1024:.0f} KB)")
