@@ -31,7 +31,7 @@ import struct
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 STATIC = ROOT / "staticdata"
 OUT = ROOT / "staging"
-LOCALE_DB = ROOT / "decrypted" / "38af6f4a2a5d25df89b95c0fa5e13006.dec"
+DEC = ROOT / "decrypted"
 
 # 职业缩写 → 中文武器名（与 data.ts 的 SPEC_WEAPON 一致）
 CLS_CN = {
@@ -131,14 +131,21 @@ def parse_levels(items):
 
 def parse_names():
     names = {}
-    if LOCALE_DB.exists():
-        c = sqlite3.connect(f"file:{LOCALE_DB}?mode=ro", uri=True)
-        for fid_key in c.execute(
-            "select \"Key\",\"zh-CN\",\"en\" from Locale_Item where \"Key\" like 'favoriteitem_collection_%'"
-        ).fetchall():
-            k, zh, en = fid_key
-            names[k] = (zh or "", en or "")
-        c.close()
+    for path in sorted(DEC.glob("*.dec")):
+        try:
+            c = sqlite3.connect(f"file:{path}?mode=ro", uri=True)
+            if "Locale_Item" not in {r[0] for r in c.execute(
+                    "SELECT name FROM sqlite_master WHERE type='table'")}:
+                c.close()
+                continue
+            for fid_key in c.execute(
+                "select \"Key\",\"zh-CN\",\"en\" from Locale_Item where \"Key\" like 'favoriteitem_collection_%'"
+            ).fetchall():
+                k, zh, en = fid_key
+                names[k] = (zh or "", en or "")
+            c.close()
+        except sqlite3.Error:
+            continue
     return names
 
 

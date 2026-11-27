@@ -2,7 +2,8 @@
 
 Categories:
   活动剧情            EventScenarioDialogTable.*           (excluding event_marian*)
-  妮姬个人剧情        AttractiveScenarioDialogTable.*      -> Locale_NikkeEpisode
+  妮姬个人剧情        AttractiveScenarioDialogTable.d_nikke_*  -> Locale_NikkeEpisode
+  珍藏品剧情          AttractiveScenarioDialogTable.treasurestory_* -> Locale_NikkeEpisode
   咨询对话            AttractiveCounselDialogTable.*       -> Locale_Counseling
   支线剧情            ScenarioDialogTable.{d_subquest,re_d_subquest,d_contents,...}
   外传与前哨基地日常   ScenarioDialogTable.{d_ex_*,d_test_*}
@@ -33,7 +34,7 @@ OUT = BASE / "其他剧情"
 
 TOKEN = re.compile(rb"[ -~]{4,}")
 SAFE = re.compile(r'[\\/:*?"<>|]')
-CATS = ["活动剧情", "妮姬个人剧情", "咨询对话", "支线剧情",
+CATS = ["活动剧情", "妮姬个人剧情", "珍藏品剧情", "咨询对话", "支线剧情",
         "外传与前哨基地日常", "支线故事", "短信与日常对话"]
 
 
@@ -123,6 +124,8 @@ def classify(fname):
                 return None, None
         return "活动剧情", group
     if table == "AttractiveScenarioDialogTable":
+        if group and group.startswith("treasurestory_"):
+            return "珍藏品剧情", group
         return "妮姬个人剧情", group
     if table == "AttractiveCounselDialogTable":
         return "咨询对话", group
@@ -156,7 +159,7 @@ def bucket_of(cat, key):
         if key.startswith("d_ex_redash"):
             return "d_ex_redash"
         return re.sub(r"_\d+(_[se])?$", "", key)
-    if cat in ("妮姬个人剧情", "咨询对话"):
+    if cat in ("妮姬个人剧情", "珍藏品剧情", "咨询对话"):
         return re.sub(r"_\d+(_[se])?$", "", key)
     if cat == "支线故事":
         m = re.match(r"(s\d+)", key)
@@ -345,12 +348,12 @@ def main():
     def unit_title(cat, bk, groups):
         if cat == "活动剧情":
             return event_registry.event_title_of(bk)
-        if cat == "妮姬个人剧情":
+        if cat in ("妮姬个人剧情", "珍藏品剧情"):
             if bk.startswith("treasurestory_"):
                 slug = bk[len("treasurestory_"):]
                 name = (counsel.get(slug, (None, None))[0]
                         or dominant_speaker(groups) or story_registry.prettify(slug))
-                return f"{name} · 宝物剧情"
+                return f"{name} · 珍藏品剧情"
             if bk.startswith("d_nikke_"):
                 return story_registry.nikke_title(
                     bk[len("d_nikke_"):], counsel, dominant_speaker(groups))
